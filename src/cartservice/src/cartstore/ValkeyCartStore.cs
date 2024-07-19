@@ -194,12 +194,12 @@ public class ValkeyCartStore : ICartStore
         }
     }
 
-    public bool Ping()
+    public async Task<bool> PingAsync()
     {
         try
         {
             var cache = _redis.GetDatabase();
-            var res = cache.Ping();
+            var res = await cache.PingAsync();
             return res != TimeSpan.Zero;
         }
         catch (Exception)

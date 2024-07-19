@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Instrumentation.StackExchangeRedis;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -20,6 +19,8 @@ using OpenFeature.Contrib.Providers.Flagd;
 using OpenFeature.Contrib.Hooks.Otel;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// TODO : Make sure we use this environment variable to configure the address of the DAPR Statemanagement store
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
 if (string.IsNullOrEmpty(valkeyAddress))
 {
@@ -33,7 +34,8 @@ builder.Logging
 
 builder.Services.AddSingleton<ICartStore>(x=>
 {
-    var store = new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), valkeyAddress);
+    // TODO : Switch between the two implementations of the cart store using featureflags?
+    var store = new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>());
     store.Initialize();
     return store;
 });
@@ -46,10 +48,11 @@ builder.Services.AddSingleton<IFeatureClient>(x => {
 });
 
 builder.Services.AddSingleton(x =>
+    // TODO :  Introduce fault injection for the dapr state management store
     new CartService(
         x.GetRequiredService<ICartStore>(),
-        new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), "badhost:1234"),
-        x.GetRequiredService<IFeatureClient>()
+        new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), "badhost:1234"), // new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>(),"bad-cart-state-store")
+        x.GetRequiredService<IFeatureClient>() 
 ));
 
 
@@ -61,8 +64,7 @@ Action<ResourceBuilder> appResourceBuilder =
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
-        .AddRedisInstrumentation(
-            options => options.SetVerboseDatabaseStatements = true)
+        // TODO : Make sure Redis is correctly instrumented in both scenarios
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
         .AddHttpClientInstrumentation()
@@ -78,9 +80,6 @@ builder.Services.AddGrpcHealthChecks()
     .AddCheck("Sample", () => HealthCheckResult.Healthy());
 
 var app = builder.Build();
-
-var ValkeyCartStore = (ValkeyCartStore) app.Services.GetRequiredService<ICartStore>();
-app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
 
 app.MapGrpcService<CartService>();
 app.MapGrpcHealthChecksService();
