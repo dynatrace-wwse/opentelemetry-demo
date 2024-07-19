@@ -17,7 +17,7 @@ public class DaprStateManagementCartStore : ICartStore
     private DaprClient _client;
     private readonly byte[] _emptyCartBytes;
 
-    public DaprStateManagementCartStore(ILogger<DaprStateManagementCartStore> logger, string daprStoreName = "cart-state-store")
+    public DaprStateManagementCartStore(ILogger<DaprStateManagementCartStore> logger, string daprStoreName)
     {
         _logger = logger;
         _daprStoreName = daprStoreName;

@@ -32,15 +32,16 @@ builder.Logging
     .AddOpenTelemetry(options => options.AddOtlpExporter())
     .AddConsole();
 
-builder.Services.AddSingleton<ICartStore>(x=>
+builder.Services.AddSingleton<ICartStore>(x =>
 {
     // TODO : Switch between the two implementations of the cart store using featureflags?
-    var store = new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>());
+    var store = new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>(), "cart-state-store");
     store.Initialize();
     return store;
 });
 
-builder.Services.AddSingleton<IFeatureClient>(x => {
+builder.Services.AddSingleton<IFeatureClient>(x =>
+{
     var flagdProvider = new FlagdProvider();
     Api.Instance.SetProviderAsync(flagdProvider).GetAwaiter().GetResult();
     var client = Api.Instance.GetClient();
@@ -52,7 +53,7 @@ builder.Services.AddSingleton(x =>
     new CartService(
         x.GetRequiredService<ICartStore>(),
         new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), "badhost:1234"), // new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>(),"bad-cart-state-store")
-        x.GetRequiredService<IFeatureClient>() 
+        x.GetRequiredService<IFeatureClient>()
 ));
 
 
@@ -65,6 +66,8 @@ builder.Services.AddOpenTelemetry()
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
         // TODO : Make sure Redis is correctly instrumented in both scenarios
+        .AddRedisInstrumentation(
+            options => options.SetVerboseDatabaseStatements = true)
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
         .AddHttpClientInstrumentation()
