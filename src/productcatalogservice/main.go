@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
+	"github.com/fsnotify/fsnotify"
 	"net"
 	"os"
 	"os/signal"
@@ -114,6 +115,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 func main() {
 	tp := initTracerProvider()
+
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
 			log.Fatalf("Tracer Provider Shutdown: %v", err)
@@ -157,6 +159,47 @@ func main() {
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
+
+	// Create new watcher to update product catalog when files change
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close() 
+
+	// Start listening for product catalog file events.
+    go func() {
+        for {
+            select {
+            case event, ok := <-watcher.Events:
+                if !ok {
+                    return
+                }
+                if event.Has(fsnotify.Write) {
+                    log.Println("Reloading modified products:", event.Name)
+					var err error
+					catalog, err = readProductFiles()
+					if err != nil {
+						log.Fatalf("Reading Product Files: %v", err)
+						os.Exit(1)
+					}
+					// end as we reloaded all files in the products folder
+					return
+                }
+            case err, ok := <-watcher.Errors:
+                if !ok {
+                    return
+                }
+                log.Println("error:", err)
+            }
+        }
+    }()
+
+	 // Add the product catalog path.
+	 err = watcher.Add("./products")
+	 if err != nil {
+		 log.Fatal(err)
+	 }
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()
