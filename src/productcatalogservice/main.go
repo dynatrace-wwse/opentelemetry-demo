@@ -10,7 +10,6 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"github.com/fsnotify/fsnotify"
 	"net"
 	"os"
 	"os/signal"
@@ -113,6 +112,29 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
+// https://stackoverflow.com/questions/8270441/go-language-how-detect-file-changing
+func watchFile(filePath string) error {
+    initialStat, err := os.Stat(filePath)
+    if err != nil {
+        return err
+    }
+
+    for {
+        stat, err := os.Stat(filePath)
+        if err != nil {
+            return err
+        }
+
+        if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
+            break
+        }
+
+        time.Sleep(1 * time.Second)
+    }
+
+    return nil
+}
+
 func main() {
 	tp := initTracerProvider()
 
@@ -160,47 +182,23 @@ func main() {
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
 
-	// Create new watcher to update product catalog when files change
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer watcher.Close() 
-
-	// Start listening for product catalog file events.
+	// Watch for updates to product catalog files
     go func() {
-        for {
-            select {
-            case event, ok := <-watcher.Events:
-                if !ok {
-                    return
-                }
-                if event.Has(fsnotify.Write) {
-                    log.Println("Reloading modified products:", event.Name)
-					var err error
-					catalog, err = readProductFiles()
-					if err != nil {
-						log.Fatalf("Reading Product Files: %v", err)
-						os.Exit(1)
-					}
-					// end as we reloaded all files in the products folder
-					return
-                }
-            case err, ok := <-watcher.Errors:
-                if !ok {
-                    return
-                }
-                log.Println("error:", err)
-            }
-        }
+		for {
+			log.Println("Watching product files for changes")
+			err := watchFile("./products/products.json")
+			if err != nil {
+				fmt.Println(err)
+			}
+		
+			log.Println("Reloading modified products.json")
+			catalog, err = readProductFiles()
+			if err != nil {
+				log.Fatalf("Reading Product Files: %v", err)
+				os.Exit(1)
+			}
+		}
     }()
-
-	 // Add the product catalog path.
-	 log.Println("Watching product files for changes")
-	 err = watcher.Add("./products")
-	 if err != nil {
-		 log.Fatal(err)
-	 }
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()
