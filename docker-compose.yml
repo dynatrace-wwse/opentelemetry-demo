@@ -462,6 +462,8 @@ services:
     restart: unless-stopped
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
+    volumes:
+    - ./src/productcatalogservice/products/:/usr/src/app/products/
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
       - FLAGD_HOST
