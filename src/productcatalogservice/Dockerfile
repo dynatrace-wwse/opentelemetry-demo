@@ -27,7 +27,8 @@ FROM alpine AS release
 
 WORKDIR /usr/src/app/
 
-COPY ./src/productcatalogservice/products/ ./products/
+# Use a volume to load products file
+# COPY ./src/productcatalogservice/products/ ./products/
 COPY --from=builder /go/bin/productcatalogservice/ ./
 
 EXPOSE ${PRODUCT_SERVICE_PORT}

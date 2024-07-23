@@ -196,6 +196,7 @@ func main() {
     }()
 
 	 // Add the product catalog path.
+	 log.Println("Watching product files for changes")
 	 err = watcher.Add("./products")
 	 if err != nil {
 		 log.Fatal(err)
