@@ -14,6 +14,8 @@ import (
 	"sync"
 	"time"
 
+	dapr "github.com/dapr/go-sdk/client"
+
 	"go.opentelemetry.io/otel/attribute"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
@@ -28,7 +30,8 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
-	otelcodes "go.opentelemetry.io/otel/codes"
+
+	// otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -43,7 +46,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
-	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
+	// "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
 )
 
@@ -55,6 +58,10 @@ var log *logrus.Logger
 var tracer trace.Tracer
 var resource *sdkresource.Resource
 var initResourcesOnce sync.Once
+var (
+	PUBSUB_NAME = "pubsub"
+	TOPIC_NAME  = "orders"
+)
 
 func init() {
 	log = logrus.New()
@@ -128,7 +135,8 @@ type checkoutService struct {
 	paymentSvcAddr        string
 	kafkaBrokerSvcAddr    string
 	pb.UnimplementedCheckoutServiceServer
-	KafkaProducerClient     sarama.AsyncProducer
+	// KafkaProducerClient     sarama.AsyncProducer
+	daprClient              dapr.Client
 	shippingSvcClient       pb.ShippingServiceClient
 	productCatalogSvcClient pb.ProductCatalogServiceClient
 	cartSvcClient           pb.CartServiceClient
@@ -200,10 +208,19 @@ func main() {
 	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_SERVICE_ADDR")
 
 	if svc.kafkaBrokerSvcAddr != "" {
-		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
+		/*
+			svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
+			if err != nil {
+				log.Fatal(err)
+			}
+		*/
+
+		//Using Dapr SDK to create a client
+		svc.daprClient, err = dapr.NewClient()
 		if err != nil {
 			log.Fatal(err)
 		}
+		//defer svc.daprClient.Close()
 	}
 
 	log.Infof("service config: %+v", svc)
@@ -496,12 +513,24 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 		return
 	}
 
-	msg := sarama.ProducerMessage{
+	//TODO: Put original Kafka Consumer Code behind feature flag
+	/* 	msg := sarama.ProducerMessage{
 		Topic: kafka.Topic,
 		Value: sarama.ByteEncoder(message),
+	} */
+
+	//Using Dapr SDK to publish a topic
+	var opts = []dapr.PublishEventOption{
+		dapr.PublishEventWithContentType("application/octet-stream"),
 	}
 
-	// Inject tracing info into message
+	if err := cs.daprClient.PublishEvent(ctx, PUBSUB_NAME, TOPIC_NAME, message, opts...); err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Published order: %#v", message)
+
+	/* // Inject tracing info into message
 	span := createProducerSpan(ctx, &msg)
 	defer span.End()
 
@@ -554,6 +583,7 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 		}
 		log.Infof("Done with #%d messages for overload simulation.", ffValue)
 	}
+	*/
 }
 
 func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {

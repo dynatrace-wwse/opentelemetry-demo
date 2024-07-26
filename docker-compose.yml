@@ -18,6 +18,22 @@ services:
   # Core Demo Services
   # ******************
   # Accounting service
+  accountingservicedapr:
+    image: "daprio/daprd:edge"
+    container_name: accounting-service-dapr
+    command: ["./daprd",
+     "-app-id", "accountingservice",
+     "-app-port", "5000",
+     "-placement-host-address", "dapr-placement:50006",
+     "-dapr-grpc-port", "50002",
+          "-dapr-http-port", "3500",
+     "-resources-path", "/components"]
+    volumes:
+        - "./components/:/components"
+    depends_on:
+      - accountingservice
+    network_mode: "service:accountingservice"
+
   accountingservice:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-accountingservice
     container_name: accounting-service
@@ -37,7 +53,12 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accountingservice
+      - DAPR_GRPC_PORT=50002
+      - DAPR_HTTP_PORT=3500
+      - ASPNETCORE_URLS=http://*:5000
     depends_on:
+      placement:
+        condition: service_started
       otelcol:
         condition: service_started
       kafka:
@@ -84,7 +105,7 @@ services:
      "-app-port", "3000",
      "-placement-host-address", "dapr-placement:50006",
      "-dapr-grpc-port", "50002",
-     "-dapr-http-port", "3500",
+      "-dapr-http-port", "3500",
      "-resources-path", "/components"]
     volumes:
         - "./components/:/components"
@@ -108,8 +129,6 @@ services:
     restart: unless-stopped
     ports:
       - "${CART_SERVICE_PORT}"
-      - "50002:50002"
-      - "3500:3500"
     environment:
       - CART_SERVICE_PORT
       - FLAGD_HOST
@@ -133,6 +152,22 @@ services:
     logging: *logging
 
   # Checkout service
+  checkoutservicedapr:
+    image: "daprio/daprd:edge"
+    container_name: checkout-service-dapr
+    command: ["./daprd",
+     "-app-id", "checkoutservice",
+     "-app-port", "3000",
+     "-placement-host-address", "dapr-placement:50006",
+     "-dapr-grpc-port", "50002",
+          "-dapr-http-port", "3500",
+     "-resources-path", "/components"]
+    volumes:
+        - "./components/:/components"
+    depends_on:
+      - checkoutservice
+    network_mode: "service:checkoutservice"
+
   checkoutservice:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-checkoutservice
     container_name: checkout-service
@@ -163,7 +198,11 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkoutservice
+      - DAPR_GRPC_PORT=50002
+      - DAPR_HTTP_PORT=3500
     depends_on:
+      placement:
+        condition: service_started
       cartservice:
         condition: service_started
       currencyservice:
@@ -238,6 +277,22 @@ services:
     logging: *logging
 
   # Fraud Detection service
+  frauddetectionservicedapr:
+    image: "daprio/daprd:edge"
+    container_name: frauddetection-service-dapr
+    command: ["./daprd",
+     "-app-id", "frauddetectionservice",
+     "-app-port", "3000",
+     "-placement-host-address", "dapr-placement:50006",
+     "-dapr-grpc-port", "50002",
+          "-dapr-http-port", "3500",
+     "-resources-path", "/components"]
+    volumes:
+        - "./components/:/components"
+    depends_on:
+      - frauddetectionservice
+    network_mode: "service:frauddetectionservice"
+
   frauddetectionservice:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frauddetectionservice
     container_name: frauddetection-service
@@ -261,7 +316,11 @@ services:
       - OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frauddetectionservice
+      - DAPR_GRPC_PORT=50002
+      - DAPR_HTTP_PORT=3500
     depends_on:
+      placement:
+        condition: service_started
       otelcol:
         condition: service_started
       kafka:
@@ -632,6 +691,8 @@ services:
         limits:
           memory: 600M
     restart: unless-stopped
+    ports:
+      - "${KAFKA_SERVICE_PORT}"
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
