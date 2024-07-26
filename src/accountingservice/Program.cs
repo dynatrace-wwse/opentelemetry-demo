@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CloudNative.CloudEvents.AspNetCore;
 using Microsoft.AspNetCore.HttpLogging;
-
 using Dapr;
 using Dapr.Client;
 using Oteldemo;
@@ -23,7 +22,7 @@ Environment.GetEnvironmentVariables()
 
 var builder = WebApplication.CreateBuilder(args);
 // This is the Original Kafka Consumer Code before Dapr
-builder.services.AddSingleton<Consumer>();
+// builder.services.AddSingleton<Consumer>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -54,8 +53,16 @@ app.MapPost("/orders", [Topic("pubsub", "orders")] (ILogger<Program> logger, [Fr
         var bytes = ((MemoryStream)stream).ToArray();
         if (bytes.Length > 0)
         {
-            var order = OrderResult.Parser.ParseFrom(bytes);
-            Console.WriteLine($"Receieved Order: {order}");
+            try
+            {
+                var order = OrderResult.Parser.ParseFrom(bytes);
+
+                Log.OrderReceivedMessage(logger, order);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Order parsing failed:");
+            }
             return Results.Ok();
         }
     }
