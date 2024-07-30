@@ -79,6 +79,12 @@ install-tools: $(MISSPELL)
 build:
 	$(DOCKER_COMPOSE_CMD) build
 
+.PHONY: build-and-push-acr
+build-and-push-acr:
+	$(DOCKER_COMPOSE_CMD) --env-file .acr.env -f docker-compose.yml build
+	$(DOCKER_COMPOSE_CMD) --env-file .acr.env -f docker-compose.yml push
+
+
 .PHONY: build-and-push-dockerhub
 build-and-push-dockerhub:
 	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml build
@@ -97,6 +103,9 @@ build-env-file:
 	cp .env .ghcr.env
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
 	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
+	cp .env .acr.env
+	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .acr.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${ACR_REPO}' .acr.env
 
 .PHONY: run-tests
 run-tests:
