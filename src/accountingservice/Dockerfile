@@ -28,4 +28,6 @@ RUN mkdir -p "/var/log/opentelemetry/dotnet"
 RUN chown app "/var/log/opentelemetry/dotnet"
 USER app
 
+EXPOSE ${ACCOUNTING_SERVICE_PORT}
+
 ENTRYPOINT ["./instrument.sh", "dotnet", "AccountingService.dll"]

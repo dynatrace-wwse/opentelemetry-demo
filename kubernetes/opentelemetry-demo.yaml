@@ -9502,6 +9502,10 @@ spec:
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.11.0
+          - name: ACCOUNTING_SERVICE_PORT
+            value: "4040"
+          - name: ASPNETCORE_URLS
+            value: http://*:$(ACCOUNTING_SERVICE_PORT)
           resources:
             limits:
               memory: 50Mi
