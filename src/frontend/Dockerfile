@@ -38,9 +38,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+
+ENV NODE_OPTIONS='-r ./Instrumentation.js'
+
 USER nextjs
 
 ENV PORT 8080
 EXPOSE ${PORT}
 
-ENTRYPOINT npm start
+ENTRYPOINT ["node","server.js"]
