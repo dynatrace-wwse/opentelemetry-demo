@@ -22,5 +22,8 @@ COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./
 COPY ./pb/demo.proto ./
 
+ENV NODE_OPTIONS='-r ./opentelemetry.js'
+
 EXPOSE ${PAYMENT_SERVICE_PORT}
-ENTRYPOINT [ "npm", "run", "start" ]
+ENTRYPOINT ["node","index.js"]
+
