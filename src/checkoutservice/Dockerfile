@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,rw,source=./src/checkoutservice,target=. \
     --mount=type=bind,rw,source=./pb,target=./pb \
     protoc -I ./pb ./pb/demo.proto --go_out=./ --go-grpc_out=./ \
-    && go build -ldflags "-s -w" -o /go/bin/checkoutservice/ ./
+    && CGO_ENABLED=0 go build -o /go/bin/checkoutservice/ ./
 
 FROM alpine
 
