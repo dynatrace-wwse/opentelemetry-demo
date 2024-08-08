@@ -38,7 +38,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-ENV OTEL_NODE_ENABLED_INSTRUMENTATIONS=''
 ENV OTEL_NODE_DISABLED_INSTRUMENTATIONS=''
 ENV NODE_OPTIONS='-r ./Instrumentation.js'
 
