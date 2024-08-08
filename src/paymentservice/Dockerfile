@@ -22,6 +22,8 @@ COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./
 COPY ./pb/demo.proto ./
 
+ENV OTEL_NODE_ENABLED_INSTRUMENTATIONS=''
+ENV OTEL_NODE_DISABLED_INSTRUMENTATIONS=''
 ENV NODE_OPTIONS='-r ./opentelemetry.js'
 
 EXPOSE ${PAYMENT_SERVICE_PORT}
