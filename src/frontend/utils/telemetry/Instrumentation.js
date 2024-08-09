@@ -22,9 +22,9 @@ const sdk = new opentelemetry.NodeSDK({
       },
     })
   ],
-  metricReader: new PeriodicExportingMetricReader({
-    exporter: new OTLPMetricExporter(),
-  }),
+   metricReader: new PeriodicExportingMetricReader({
+     exporter: new OTLPMetricExporter(),
+   }),
   resourceDetectors: [
     containerDetector,
     envDetector,
