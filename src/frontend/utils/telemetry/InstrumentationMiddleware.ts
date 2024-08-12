@@ -8,41 +8,27 @@ import { metrics } from '@opentelemetry/api';
 
 const meter = metrics.getMeter('frontend');
 const requestCounter = meter.createCounter('app.frontend.requests');
+const tracer = trace.getTracer('frontend');
 
 const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
   return async (request, response) => {
     const { method, url = '' } = request;
     const [target] = url.split('?');
 
-    const span = trace.getSpan(context.active()) as Span;
+    const span = (trace.getSpan(context.active()) || tracer.startSpan('InstrumentationMiddleware')) as Span;
 
-    // TODO - when OTEL Auto instrumentation is disabled this is null?
-    if (span) {
-      let httpStatus = 200;
-      try {
-        await runWithSpan(span, async () => handler(request, response));
-        httpStatus = response.statusCode;
-      } catch (error) {
-        span.recordException(error as Exception);
-        span.setStatus({ code: SpanStatusCode.ERROR });
-        httpStatus = 500;
-        throw error;
-      } finally {
-        requestCounter.add(1, { method, target, status: httpStatus });
-        span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, httpStatus);
-      }
-    }
-    else {
-      let httpStatus = 200;
-      try {
-        await handler(request, response);
-        httpStatus = response.statusCode;
-      } catch (error) {
-        httpStatus = 500;
-        throw error;
-      } finally {
-        requestCounter.add(1, { method, target, status: httpStatus });
-      }
+    let httpStatus = 200;
+    try {
+      await runWithSpan(span, async () => handler(request, response));
+      httpStatus = response.statusCode;
+    } catch (error) {
+      span.recordException(error as Exception);
+      span.setStatus({ code: SpanStatusCode.ERROR });
+      httpStatus = 500;
+      throw error;
+    } finally {
+      requestCounter.add(1, { method, target, status: httpStatus });
+      span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, httpStatus);
     }
   };
 };
