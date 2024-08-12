@@ -7,9 +7,10 @@ const opentelemetry = require('@opentelemetry/api')
 
 const charge = require('./charge')
 const logger = require('./logger')
+const tracer = opentelemetry.trace.getTracer(process.env.OTEL_SERVICE_NAME);
 
 async function chargeServiceHandler(call, callback) {
-  const span = opentelemetry.trace.getActiveSpan() || opentelemetry.trace.startSpan('paymentservice');
+  const span = opentelemetry.trace.getActiveSpan() || tracer.startSpan('chargeServiceHandler');
 
   try {
     const amount = call.request.amount
