@@ -9,7 +9,7 @@ const charge = require('./charge')
 const logger = require('./logger')
 
 async function chargeServiceHandler(call, callback) {
-  const span = opentelemetry.trace.getActiveSpan();
+  const span = opentelemetry.trace.getActiveSpan() || opentelemetry.trace.startSpan('chargeServiceHandler');
 
   try {
     const amount = call.request.amount
@@ -51,7 +51,7 @@ server.bindAsync(`0.0.0.0:${process.env['PAYMENT_SERVICE_PORT']}`, grpc.ServerCr
   }
 
   logger.info(`PaymentService gRPC server started on port ${port}`)
-  server.start()
+  // server.start() - Not required deprecated
 }
 )
 
