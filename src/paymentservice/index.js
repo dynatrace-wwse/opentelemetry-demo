@@ -51,7 +51,7 @@ server.bindAsync(`0.0.0.0:${process.env['PAYMENT_SERVICE_PORT']}`, grpc.ServerCr
   }
 
   logger.info(`PaymentService gRPC server started on port ${port}`)
-  server.start() - Not required deprecated
+  server.start()
 }
 )
 
