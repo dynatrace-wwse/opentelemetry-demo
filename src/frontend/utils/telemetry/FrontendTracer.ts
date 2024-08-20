@@ -22,7 +22,10 @@ const {
 const FrontendTracer = (collectorString: string) => {
   // Dont setup collector if not provided
   if(!collectorString)
+  {
+    console.log('No OpenTelemtery collector endpoint provided, skipping setup of frontend tracer.');
     return;
+  }
 
   let resource = new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
