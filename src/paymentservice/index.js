@@ -10,7 +10,14 @@ const logger = require('./logger')
 const tracer = opentelemetry.trace.getTracer(process.env.OTEL_SERVICE_NAME);
 
 async function chargeServiceHandler(call, callback) {
-  const span = opentelemetry.trace.getActiveSpan() || tracer.startSpan('chargeServiceHandler');
+  // Check if we have an active span if not start a new one to maintain the existing behavior
+  let span = opentelemetry.trace.getActiveSpan();
+  let startedSpan = false;
+  if (!span)
+  {
+    span = tracer.startSpan('chargeServiceHandler');
+    startedSpan = true;
+  }
 
   try {
     const amount = call.request.amount
@@ -27,7 +34,10 @@ async function chargeServiceHandler(call, callback) {
 
     span.recordException(err)
     span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
-
+    // Make sure we cleanup by closing the span if we started it.
+    if (startedSpan) {
+      span.end();
+    }
     callback(err)
   }
 }

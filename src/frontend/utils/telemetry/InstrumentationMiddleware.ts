@@ -15,7 +15,14 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
     const { method, url = '' } = request;
     const [target] = url.split('?');
 
-    const span = (trace.getSpan(context.active()) || tracer.startSpan('InstrumentationMiddleware')) as Span;
+    // Check if we have an active span if not start a new one to maintain the existing behavior
+    let span = trace.getSpan(context.active());
+    let startedSpan = false;
+    if (!span)
+    {
+      span = tracer.startSpan('InstrumentationMiddleware');
+      startedSpan = true;
+    }
 
     let httpStatus = 200;
     try {
@@ -29,6 +36,10 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
     } finally {
       requestCounter.add(1, { method, target, status: httpStatus });
       span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, httpStatus);
+      // Make sure we cleanup by closing the span if we started it.
+      if (startedSpan) {
+        span.end();
+      }
     }
   };
 };
