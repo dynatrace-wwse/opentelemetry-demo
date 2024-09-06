@@ -57,6 +57,7 @@ func init() {
 	var err error
 	catalog, err = readProductFile()
 	if err != nil {
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Fatalf("Reading Product File: %v", err)
 		os.Exit(1)
 	}
@@ -84,6 +85,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Fatalf("OTLP Trace gRPC Creation: %v", err)
 	}
 	tp := sdktrace.NewTracerProvider(
@@ -100,6 +102,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 	exporter, err := otlpmetricgrpc.New(ctx)
 	if err != nil {
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
 	}
 
@@ -109,6 +112,13 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	)
 	otel.SetMeterProvider(mp)
 	return mp
+}
+
+func LogrusFields(span trace.Span) logrus.Fields {
+	return logrus.Fields{
+		"span_id":  span.SpanContext().SpanID().String(),
+		"trace_id": span.SpanContext().TraceID().String(),
+	}
 }
 
 // https://stackoverflow.com/questions/8270441/go-language-how-detect-file-changing
@@ -139,25 +149,31 @@ func main() {
 
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
+			// TODO: log.WithFields(LogrusFields(span))
 			log.Fatalf("Tracer Provider Shutdown: %v", err)
 		}
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Println("Shutdown tracer provider")
 	}()
 
 	mp := initMeterProvider()
 	defer func() {
 		if err := mp.Shutdown(context.Background()); err != nil {
+			// TODO: log.WithFields(LogrusFields(span))
 			log.Fatalf("Error shutting down meter provider: %v", err)
 		}
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Println("Shutdown meter provider")
 	}()
 	err := openfeature.SetProvider(flagd.NewProvider())
 	if err != nil {
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Fatal(err)
 	}
 
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Fatal(err)
 	}
 
@@ -165,10 +181,12 @@ func main() {
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_SERVICE_PORT")
 
+	// TODO: log.WithFields(LogrusFields(span))
 	log.Infof("ProductCatalogService gRPC server started on port: %s", port)
 
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Fatalf("TCP Listen: %v", err)
 	}
 
@@ -184,15 +202,18 @@ func main() {
 	// Watch for updates to product catalog files
 	go func() {
 		for {
+			// TODO: log.WithFields(LogrusFields(span))
 			log.Println("Watching product files for changes")
 			err := watchFile("./products/products.json")
 			if err != nil {
 				fmt.Println(err)
 			}
 
+			// TODO: log.WithFields(LogrusFields(span))
 			log.Println("Reloading modified products.json")
 			catalog, err = readProductFile()
 			if err != nil {
+				// TODO: log.WithFields(LogrusFields(span))
 				log.Fatalf("Reading Product Files: %v", err)
 				os.Exit(1)
 			}
@@ -204,6 +225,7 @@ func main() {
 
 	go func() {
 		if err := srv.Serve(ln); err != nil {
+			// TODO: log.WithFields(LogrusFields(span))
 			log.Fatalf("Failed to serve gRPC server, err: %v", err)
 		}
 	}()
@@ -211,6 +233,7 @@ func main() {
 	<-ctx.Done()
 
 	srv.GracefulStop()
+	// TODO: log.WithFields(LogrusFields(span))
 	log.Println("ProductCatalogService gRPC server stopped")
 }
 
@@ -234,6 +257,7 @@ func readProductFile() ([]*pb.Product, error) {
 	}
 
 	products = append(products, res.Products...)
+	// TODO: log.WithFields(LogrusFields(span))
 	log.Infof("Loaded %d products", len(products))
 
 	return products, nil
@@ -242,6 +266,7 @@ func readProductFile() ([]*pb.Product, error) {
 func mustMapEnv(target *string, key string) {
 	value, present := os.LookupEnv(key)
 	if !present {
+		// TODO: log.WithFields(LogrusFields(span))
 		log.Fatalf("Environment Variable Not Set: %q", key)
 	}
 	*target = value
@@ -269,6 +294,8 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	span.SetAttributes(
 		attribute.String("app.product.id", req.Id),
 	)
+
+	log.WithFields(LogrusFields(span)).Infof("[GetProduct] product.id=%qq", req.Id)
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
