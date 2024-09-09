@@ -28,5 +28,9 @@ http {
 
         root /static;
         gzip_static on;
+
+        location /status {
+            stub_status;
+        }
     }
 }
