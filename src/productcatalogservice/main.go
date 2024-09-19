@@ -9,7 +9,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"net"
 	"os"
 	"os/signal"
@@ -56,9 +55,9 @@ var (
 func init() {
 	log = logrus.New()
 	var err error
-	catalog, err = readProductFiles()
+	catalog, err = readProductFile()
 	if err != nil {
-		log.Fatalf("Reading Product Files: %v", err)
+		log.Fatalf("Reading Product File: %v", err)
 		os.Exit(1)
 	}
 }
@@ -112,8 +111,39 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
+func LogrusFields(span trace.Span) logrus.Fields {
+	return logrus.Fields{
+		"span_id":  span.SpanContext().SpanID().String(),
+		"trace_id": span.SpanContext().TraceID().String(),
+	}
+}
+
+// https://stackoverflow.com/questions/8270441/go-language-how-detect-file-changing
+func watchFile(filePath string) error {
+	initialStat, err := os.Stat(filePath)
+	if err != nil {
+		return err
+	}
+
+	for {
+		stat, err := os.Stat(filePath)
+		if err != nil {
+			return err
+		}
+
+		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
+			break
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+
+	return nil
+}
+
 func main() {
 	tp := initTracerProvider()
+
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
 			log.Fatalf("Tracer Provider Shutdown: %v", err)
@@ -158,6 +188,24 @@ func main() {
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
 
+	// Watch for updates to product catalog files
+	go func() {
+		for {
+			log.Println("Watching product files for changes")
+			err := watchFile("./products/products.json")
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			log.Println("Reloading modified products.json")
+			catalog, err = readProductFile()
+			if err != nil {
+				log.Fatalf("Reading Product Files: %v", err)
+				os.Exit(1)
+			}
+		}
+	}()
+
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()
 
@@ -177,42 +225,22 @@ type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
 }
 
-func readProductFiles() ([]*pb.Product, error) {
-
-	// find all .json files in the products directory
-	entries, err := os.ReadDir("./products")
-	if err != nil {
-		return nil, err
-	}
-
-	jsonFiles := make([]fs.FileInfo, 0, len(entries))
-	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".json") {
-			info, err := entry.Info()
-			if err != nil {
-				return nil, err
-			}
-			jsonFiles = append(jsonFiles, info)
-		}
-	}
+func readProductFile() ([]*pb.Product, error) {
 
 	// read the contents of each .json file and unmarshal into a ListProductsResponse
 	// then append the products to the catalog
 	var products []*pb.Product
-	for _, f := range jsonFiles {
-		jsonData, err := os.ReadFile("./products/" + f.Name())
-		if err != nil {
-			return nil, err
-		}
-
-		var res pb.ListProductsResponse
-		if err := protojson.Unmarshal(jsonData, &res); err != nil {
-			return nil, err
-		}
-
-		products = append(products, res.Products...)
+	jsonData, err := os.ReadFile("./products/products.json")
+	if err != nil {
+		return nil, err
 	}
 
+	var res pb.ListProductsResponse
+	if err := protojson.Unmarshal(jsonData, &res); err != nil {
+		return nil, err
+	}
+
+	products = append(products, res.Products...)
 	log.Infof("Loaded %d products", len(products))
 
 	return products, nil
@@ -248,6 +276,8 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	span.SetAttributes(
 		attribute.String("app.product.id", req.Id),
 	)
+
+	log.WithFields(LogrusFields(span)).Infof("[GetProduct] product.id=%qq", req.Id)
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
