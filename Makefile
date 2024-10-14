@@ -79,21 +79,27 @@ install-tools: $(MISSPELL)
 build:
 	$(DOCKER_COMPOSE_CMD) build
 
+
+.PHONY: build-and-push-ecr
+build-and-push-ecr:
+	$(DOCKER_COMPOSE_CMD) --env-file .ecr.env --env-file .env.override -f docker-compose.yml build
+	$(DOCKER_COMPOSE_CMD) --env-file .ecr.env --env-file .env.override -f docker-compose.yml push
+
 .PHONY: build-and-push-acr
 build-and-push-acr:
-	$(DOCKER_COMPOSE_CMD) --env-file .acr.env -f docker-compose.yml build
-	$(DOCKER_COMPOSE_CMD) --env-file .acr.env -f docker-compose.yml push
+	$(DOCKER_COMPOSE_CMD) --env-file .acr.env --env-file .env.override -f docker-compose.yml build
+	$(DOCKER_COMPOSE_CMD) --env-file .acr.env --env-file .env.override -f docker-compose.yml push
 
 
 .PHONY: build-and-push-dockerhub
 build-and-push-dockerhub:
-	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml build
-	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml push
+	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env --env-file .env.override -f docker-compose.yml build
+	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env --env-file .env.override -f docker-compose.yml push
 
 .PHONY: build-and-push-ghcr
 build-and-push-ghcr:
-	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env -f docker-compose.yml build
-	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env -f docker-compose.yml push
+	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env --env-file .env.override -f docker-compose.yml build
+	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env --env-file .env.override -f docker-compose.yml push
 
 .PHONY: build-env-file
 build-env-file:
@@ -106,6 +112,9 @@ build-env-file:
 	cp .env .acr.env
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .acr.env
 	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${ACR_REPO}' .acr.env
+	cp .env .ecr.env
+	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ecr.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${ACR_REPO}' .ecr.env
 
 .PHONY: run-tests
 run-tests:
