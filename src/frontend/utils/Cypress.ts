@@ -13,6 +13,7 @@ export enum CypressFields {
   CheckoutItem = 'checkout-item',
   CurrencySwitcher = 'currency-switcher',
   SessionId = 'session-id',
+  UserId = 'user-id',
   ProductCard = 'product-card',
   ProductList = 'product-list',
   ProductPrice = 'product-price',

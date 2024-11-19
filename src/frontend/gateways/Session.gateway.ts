@@ -12,7 +12,7 @@ interface ISession {
 const sessionKey = 'session';
 const defaultSession = {
   userId: getCookie('USERID') || v4(),
-  currencyCode: getCookie('CURRENCYCODE') ||'USD',
+  currencyCode: 'USD',
 };
 
 const SessionGateway = () => ({

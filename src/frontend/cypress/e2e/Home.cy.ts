@@ -4,6 +4,7 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
 import SessionGateway from '../../gateways/Session.gateway';
 import { CypressFields, getElementByField } from '../../utils/Cypress';
+import { getCookie } from "cookies-next";
 
 describe('Home Page', () => {
   beforeEach(() => {
@@ -15,6 +16,7 @@ describe('Home Page', () => {
     getElementByField(CypressFields.ProductCard, getElementByField(CypressFields.ProductList)).should('have.length', 10);
 
     getElementByField(CypressFields.SessionId).should('contain', SessionGateway.getSession().userId);
+    getElementByField(CypressFields.UserId).should('contain', getCookie('SESSIONID'));
   });
 
   it('should change currency', () => {

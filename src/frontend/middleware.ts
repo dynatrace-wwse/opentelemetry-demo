@@ -12,15 +12,11 @@ export function middleware(request: NextRequest) {
   // Set the USERID cookie if it is not set
   if(!request.cookies.has('USERID'))
     response.cookies.set('USERID', v4())
-
-  // Set the CURRENCYCODE cookie if it is not set
-  if(!request.cookies.has('CURRENCYCODE'))
-    response.cookies.set('CURRENCYCODE', 'USD')
  
   return response
 }
 
-// See "Matching Paths" below to learn more
+// Matching paths
 export const config = {
   matcher: '/:path*',
 }
