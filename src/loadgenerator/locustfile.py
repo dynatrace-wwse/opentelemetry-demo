@@ -104,8 +104,6 @@ people_file = open('people.json')
 people = json.load(people_file)
 
 class WebsiteUser(HttpUser):
-    # session_id = ''
-    #data = {}
     wait_time = between(1, 10)
 
     @task(1)
@@ -137,8 +135,6 @@ class WebsiteUser(HttpUser):
 
     @task(2)
     def add_to_cart(self, user=""):
-        if user == "":
-            user = str(uuid.uuid1())
         product = random.choice(products)
         self.client.get("/api/products/" + product, data=self.data) 
         cart_item = {
@@ -156,20 +152,18 @@ class WebsiteUser(HttpUser):
     @task(1)
     def checkout(self):
         # checkout call with an item added to cart
-        user = str(uuid.uuid1())
-        self.add_to_cart(user=user)
+        self.add_to_cart(user=self.user_id)
         checkout_person = random.choice(people)
-        checkout_person["userId"] = user
+        checkout_person["userId"] = self.user_id
         self.client.post("/api/checkout", json=checkout_person, data=self.data)
 
     @task(1)
     def checkout_multi(self):
         # checkout call which adds 2-4 different items to cart before checkout
-        user = str(uuid.uuid1())
         for i in range(random.choice([2, 3, 4])):
-            self.add_to_cart(user=user)
+            self.add_to_cart(user=self.user_id)
         checkout_person = random.choice(people)
-        checkout_person["userId"] = user
+        checkout_person["userId"] = self.user_id
         self.client.post("/api/checkout", json=checkout_person, data=self.data)
 
     @task(5)
@@ -179,9 +173,11 @@ class WebsiteUser(HttpUser):
 
     def on_start(self):
         # use the same http session for all user requests
+        self.user_id = str(uuid.uuid4())
         self.session_id = str(uuid.uuid4())
-        self.data = {"Cookie": f"SESSIONID={self.session_id}"}
+        self.data = {"Cookie": f"SESSIONID={self.session_id};USERID={self.user_id};"}
         ctx = baggage.set_baggage("session.id", self.session_id)
+        ctx = baggage.set_baggage("user.id", self.user_id)
         ctx = baggage.set_baggage("synthetic_request", "true", context=ctx)
         context.attach(ctx)
         self.index()
