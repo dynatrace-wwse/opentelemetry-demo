@@ -108,11 +108,11 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def index(self):
-        self.client.get("/", data=self.data)
+        self.client.get("/")
 
     @task(10)
     def browse_product(self):
-        self.client.get("/api/products/" + random.choice(products), data=self.data)
+        self.client.get("/api/products/" + random.choice(products))
 
     @task(3)
     def get_recommendations(self):
@@ -120,23 +120,23 @@ class WebsiteUser(HttpUser):
             "productIds": [random.choice(products)],
             "sessionId": self.session_id,
         }
-        self.client.get("/api/recommendations", params=params, data=self.data)
+        self.client.get("/api/recommendations", params=params)
 
     @task(3)
     def get_ads(self):
         params = {
             "contextKeys": [random.choice(categories)],
         }
-        self.client.get("/api/data/", params=params, data=self.data)
+        self.client.get("/api/data/", params=params)
 
     @task(3)
     def view_cart(self):
-        self.client.get("/api/cart", data=self.data)
+        self.client.get("/api/cart")
 
     @task(2)
     def add_to_cart(self, user=""):
         product = random.choice(products)
-        self.client.get("/api/products/" + product, data=self.data) 
+        self.client.get("/api/products/" + product) 
         cart_item = {
             "item": {
                 "productId": product,
@@ -147,7 +147,7 @@ class WebsiteUser(HttpUser):
         params = {
             "sessionId":  self.session_id,
         }
-        self.client.post("/api/cart", params=params, json=cart_item, data=self.data)
+        self.client.post("/api/cart", params=params, json=cart_item)
 
     @task(1)
     def checkout(self):
@@ -155,7 +155,7 @@ class WebsiteUser(HttpUser):
         self.add_to_cart(user=self.user_id)
         checkout_person = random.choice(people)
         checkout_person["userId"] = self.user_id
-        self.client.post("/api/checkout", json=checkout_person, data=self.data)
+        self.client.post("/api/checkout", json=checkout_person)
 
     @task(1)
     def checkout_multi(self):
@@ -164,18 +164,19 @@ class WebsiteUser(HttpUser):
             self.add_to_cart(user=self.user_id)
         checkout_person = random.choice(people)
         checkout_person["userId"] = self.user_id
-        self.client.post("/api/checkout", json=checkout_person, data=self.data)
+        self.client.post("/api/checkout", json=checkout_person)
 
     @task(5)
     def flood_home(self):
         for _ in range(0, get_flagd_value("loadgeneratorFloodHomepage")):
-            self.client.get("/", data=self.data)
+            self.client.get("/")
 
     def on_start(self):
-        # use the same http session for all user requests
+        # use the same http session for all requests
         self.user_id = str(uuid.uuid4())
         self.session_id = str(uuid.uuid4())
-        self.data = {"Cookie": f"SESSIONID={self.session_id};USERID={self.user_id};"}
+        self.client.cookies.set("SESSIONID", self.session_id)
+        self.client.cookies.set("USERID", self.user_id)
         ctx = baggage.set_baggage("session.id", self.session_id)
         ctx = baggage.set_baggage("user.id", self.user_id)
         ctx = baggage.set_baggage("synthetic_request", "true", context=ctx)
@@ -213,6 +214,43 @@ if browser_traffic_enabled:
                 await page.wait_for_timeout(2000)  # giving the browser time to export the traces
             except:
                 pass
+
+        @task
+        @pw
+        async def add_product_to_cart_and_checkout(self, page: PageWithRetry):
+            page.on("console", lambda msg: print(msg.text))
+            await page.route('**/*', add_baggage_header)
+            await page.goto("/", wait_until="domcontentloaded")
+            
+            # Get a random product link and click on it
+            product_id = random.choice(products)
+            await page.click('a[href="/product/{product_id}"]', wait_until="domcontentloaded")
+            
+            # Add a random number of products to the cart
+            product_count = random.choice([1, 2, 3, 4, 5, 10])
+            await page.select_option('select[data-cy="product-quantity"]', value=product_count)
+
+            # add the product to our cart
+            await page.click('button:has-text("Add To Cart")', wait_until="domcontentloaded")
+
+            # select a random user from the people.json file and checkout
+            checkout_details = random.choice(people)
+            await page.select_option('select[name="currency_code"]', value=checkout_details['userCurrency'])
+
+            await page.locator('input#email').fill(checkout_details['email'])
+            await page.locator('input#street_address').fill(checkout_details['address']['streetAddress'])
+            await page.locator('input#zip_code').fill(checkout_details['address']['zipCode'])
+            await page.locator('input#city').fill(checkout_details['address']['city'])
+            await page.locator('input#state').fill(checkout_details['address']['state'])
+            await page.locator('input#country').fill(checkout_details['address']['country'])
+            await page.locator('input#credit_card_number').fill(checkout_details['creditCard']['creditCardNumber'])
+            await page.locator('select#credit_card_expiration_month').selectOption({ "value": checkout_details['creditCard']['creditCardExpirationMonth'] })
+            await page.locator('select#credit_card_expiration_year').selectOption({ "value": checkout_details['creditCard']['creditCardExpirationYear'] })
+            await page.locator('input#credit_card_cvv').fill(checkout_details['creditCard']['creditCardCvv'])
+
+            # Complete the order
+            await page.click('button:has-text("Place Order")', wait_until="domcontentloaded")
+            await page.wait_for_timeout(2000)  # giving the browser time to export the traces            
 
 
 async def add_baggage_header(route: Route, request: Request):
