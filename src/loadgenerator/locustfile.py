@@ -104,6 +104,7 @@ people_file = open('people.json')
 people = json.load(people_file)
 
 class WebsiteUser(HttpUser):
+    weight = 1
     wait_time = between(1, 10)
 
     @task(1)
@@ -188,34 +189,47 @@ browser_traffic_enabled = os.environ.get("LOCUST_BROWSER_TRAFFIC_ENABLED", "").l
 
 if browser_traffic_enabled:
     class WebsiteBrowserUser(PlaywrightUser):
+        weight = 2
         headless = True  # to use a headless browser, without a GUI
 
-        @task
+        @task(2)
         @pw
         async def open_cart_page_and_change_currency(self, page: PageWithRetry):
             try:
                 page.on("console", lambda msg: print(msg.text))
                 await page.route('**/*', add_baggage_header)
                 await page.goto("/cart", wait_until="domcontentloaded")
-                await page.select_option('[name="currency_code"]', 'CHF')
+                
+                # select a random user from the people.json file and checkout
+                checkout_details = random.choice(people)
+                await page.select_option('[name="currency_code"]', value=checkout_details['userCurrency'])
+
                 await page.wait_for_timeout(2000)  # giving the browser time to export the traces
             except:
                 pass
 
-        @task
+        @task(3)
         @pw
         async def add_product_to_cart(self, page: PageWithRetry):
             try:
                 page.on("console", lambda msg: print(msg.text))
                 await page.route('**/*', add_baggage_header)
                 await page.goto("/", wait_until="domcontentloaded")
-                await page.click('p:has-text("Roof Binoculars")', wait_until="domcontentloaded")
+
+                # Get a random product link and click on it
+                product_id = random.choice(products)
+                await page.click('a[href="/product/{product_id}"]', wait_until="domcontentloaded")
+                
+                # Add a random number of products to the cart
+                product_count = random.choice([1, 2, 3, 4, 5, 10])
+                await page.select_option('select[data-cy="product-quantity"]', value=product_count)
+
                 await page.click('button:has-text("Add To Cart")', wait_until="domcontentloaded")
                 await page.wait_for_timeout(2000)  # giving the browser time to export the traces
             except:
                 pass
 
-        @task
+        @task(4)
         @pw
         async def add_product_to_cart_and_checkout(self, page: PageWithRetry):
             page.on("console", lambda msg: print(msg.text))
