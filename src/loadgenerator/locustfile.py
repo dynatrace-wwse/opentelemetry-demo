@@ -12,7 +12,8 @@ import logging
 import sys, traceback
 
 from locust import HttpUser, task, between
-from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry, event
+from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry
+from locust.exception import RescheduleTask
 
 from opentelemetry import context, baggage, trace
 from opentelemetry.metrics import set_meter_provider
@@ -195,70 +196,82 @@ if browser_traffic_enabled:
         @task(2)
         @pw
         async def open_cart_page_and_change_currency(self, page: PageWithRetry):
-            page.on("console", lambda msg: print(msg.text))
-            await page.route('**/*', add_baggage_header)
-            await page.goto("/cart", wait_until="domcontentloaded")
-            
-            # select a random user from the people.json file and checkout
-            checkout_details = random.choice(people)
-            await page.select_option('[name="currency_code"]', value=checkout_details['userCurrency'])
+            try:
+                page.on("console", lambda msg: print(msg.text))
+                await page.route('**/*', add_baggage_header)
+                await page.goto("/cart", wait_until="domcontentloaded")
+                
+                # select a random user from the people.json file and checkout
+                checkout_details = random.choice(people)
+                await page.select_option('[name="currency_code"]', value=str(checkout_details['userCurrency']))
 
-            await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+                await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+            except Exception as e:
+                traceback.print_exc(file=sys.stdout)
+                raise RescheduleTask(e)
 
         @task(2)
         @pw
         async def add_product_to_cart(self, page: PageWithRetry):
-            page.on("console", lambda msg: print(msg.text))
-            await page.route('**/*', add_baggage_header)
-            await page.goto("/", wait_until="domcontentloaded")
+            try:
+                page.on("console", lambda msg: print(msg.text))
+                await page.route('**/*', add_baggage_header)
+                await page.goto("/", wait_until="domcontentloaded")
 
-            # Get a random product link and click on it
-            product_id = random.choice(products)
-            await page.click(f"a[href='/product/{product_id}']")
-            
-            # Add a random number of products to the cart
-            product_count = random.choice([1, 2, 3, 4, 5, 10])
-            await page.select_option('select[data-cy="product-quantity"]', value=str(product_count))
+                # Get a random product link and click on it
+                product_id = random.choice(products)
+                await page.click(f"a[href='/product/{product_id}']")
+                
+                # Add a random number of products to the cart
+                product_count = random.choice([1, 2, 3, 4, 5, 10])
+                await page.select_option('select[data-cy="product-quantity"]', value=str(product_count))
 
-            await page.click('button:has-text("Add To Cart")')
-            await page.wait_for_timeout(2000)  # giving the browser time to export the traces
-
+                await page.click('button:has-text("Add To Cart")')
+                await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+            except Exception as e:
+                traceback.print_exc(file=sys.stdout)
+                raise RescheduleTask(e)
+        
         @task(4)
         @pw
         async def add_product_to_cart_and_checkout(self, page: PageWithRetry):
-            page.on("console", lambda msg: print(msg.text))
-            await page.route('**/*', add_baggage_header)
-            await page.goto("/", wait_until="domcontentloaded")
-            
-            # Get a random product link and click on it
-            product_id = random.choice(products)
-            await page.click(f"a[href='/product/{product_id}']")
-            
-            # Add a random number of products to the cart
-            product_count = random.choice([1, 2, 3, 4, 5, 10])
-            await page.select_option('select[data-cy="product-quantity"]', value=str(product_count))
+            try:
+                page.on("console", lambda msg: print(msg.text))
+                await page.route('**/*', add_baggage_header)
+                await page.goto("/", wait_until="domcontentloaded")
+                
+                # Get a random product link and click on it
+                product_id = random.choice(products)
+                await page.click(f"a[href='/product/{product_id}']")
+                
+                # Add a random number of products to the cart
+                product_count = random.choice([1, 2, 3, 4, 5, 10])
+                await page.select_option('select[data-cy="product-quantity"]', value=str(product_count))
 
-            # add the product to our cart
-            await page.click('button:has-text("Add To Cart")')
+                # add the product to our cart
+                await page.click('button:has-text("Add To Cart")')
 
-            # select a random user from the people.json file and checkout
-            checkout_details = random.choice(people)
-            await page.select_option('select[name="currency_code"]', value=checkout_details['userCurrency'])
+                # select a random user from the people.json file and checkout
+                checkout_details = random.choice(people)
+                await page.select_option('select[name="currency_code"]', value=str(checkout_details['userCurrency']))
 
-            await page.locator('input#email').fill(checkout_details['email'])
-            await page.locator('input#street_address').fill(checkout_details['address']['streetAddress'])
-            await page.locator('input#zip_code').fill(checkout_details['address']['zipCode'])
-            await page.locator('input#city').fill(checkout_details['address']['city'])
-            await page.locator('input#state').fill(checkout_details['address']['state'])
-            await page.locator('input#country').fill(checkout_details['address']['country'])
-            await page.locator('input#credit_card_number').fill(checkout_details['creditCard']['creditCardNumber'])
-            await page.select_option('select#credit_card_expiration_month', value=str(checkout_details['creditCard']['creditCardExpirationMonth']))
-            await page.select_option('select#credit_card_expiration_year', value=str(checkout_details['creditCard']['creditCardExpirationYear']))
-            await page.locator('input#credit_card_cvv').fill(checkout_details['creditCard']['creditCardCvv'])
+                await page.locator('input#email').fill(checkout_details['email'])
+                await page.locator('input#street_address').fill(checkout_details['address']['streetAddress'])
+                await page.locator('input#zip_code').fill(str(checkout_details['address']['zipCode']))
+                await page.locator('input#city').fill(checkout_details['address']['city'])
+                await page.locator('input#state').fill(checkout_details['address']['state'])
+                await page.locator('input#country').fill(checkout_details['address']['country'])
+                await page.locator('input#credit_card_number').fill(str(checkout_details['creditCard']['creditCardNumber']))
+                await page.select_option('select#credit_card_expiration_month', value=str(checkout_details['creditCard']['creditCardExpirationMonth']))
+                await page.select_option('select#credit_card_expiration_year', value=str(checkout_details['creditCard']['creditCardExpirationYear']))
+                await page.locator('input#credit_card_cvv').fill(str(checkout_details['creditCard']['creditCardCvv']))
 
-            # Complete the order
-            await page.click('button:has-text("Place Order")')
-            await page.wait_for_timeout(2000)  # giving the browser time to export the traces 
+                # Complete the order
+                await page.click('button:has-text("Place Order")')
+                await page.wait_for_timeout(2000)  # giving the browser time to export the traces 
+            except Exception as e:
+                traceback.print_exc(file=sys.stdout)
+                raise RescheduleTask(e)
 
 
 async def add_baggage_header(route: Route, request: Request):
