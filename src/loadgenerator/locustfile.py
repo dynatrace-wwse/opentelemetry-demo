@@ -110,11 +110,11 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def index(self):
-        self.client.get("/", self.headers)
+        self.client.get("/", headers=self.headers)
 
     @task(10)
     def browse_product(self):
-        self.client.get("/api/products/" + random.choice(products), self.headers)
+        self.client.get("/api/products/" + random.choice(products), headers=self.headers)
 
     @task(3)
     def get_recommendations(self):
@@ -133,12 +133,12 @@ class WebsiteUser(HttpUser):
 
     @task(3)
     def view_cart(self):
-        self.client.get("/api/cart", self.headers)
+        self.client.get("/api/cart", headers=self.headers)
 
     @task(2)
     def add_to_cart(self, user=""):
         product = random.choice(products)
-        self.client.get("/api/products/" + product, self.headers) 
+        self.client.get("/api/products/" + product, headers=self.headers) 
         cart_item = {
             "item": {
                 "productId": product,
@@ -171,14 +171,14 @@ class WebsiteUser(HttpUser):
     @task(5)
     def flood_home(self):
         for _ in range(0, get_flagd_value("loadgeneratorFloodHomepage")):
-            self.client.get("/", self.headers)
+            self.client.get("/", headers=self.headers)
 
     def on_start(self):
         # use the same http session for all requests
         self.user_id = str(uuid.uuid4())
         self.session_id = str(uuid.uuid4())
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Locust/2.x Safari/537.36',
+            'User-Agent': 'Locust/2.x',
             "Cookie":f"SESSIONID:{self.session_id};USERID:{self.user_id};"
         }
         # normalize cookie seperator on ';' for the http traffic
