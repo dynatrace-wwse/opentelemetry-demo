@@ -177,7 +177,10 @@ class WebsiteUser(HttpUser):
         # use the same http session for all requests
         self.user_id = str(uuid.uuid4())
         self.session_id = str(uuid.uuid4())
-        self.headers = {"Cookie":f"SESSIONID:{self.session_id};USERID:{self.user_id};"}
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Locust/2.x Safari/537.36',
+            "Cookie":f"SESSIONID:{self.session_id};USERID:{self.user_id};"
+        }
         # normalize cookie seperator on ';' for the http traffic
         # self.client.cookies.set("SESSIONID", self.session_id)
         # self.client.cookies.set("USERID", self.user_id)
