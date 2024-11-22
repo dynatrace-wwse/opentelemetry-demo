@@ -177,8 +177,8 @@ class WebsiteUser(HttpUser):
         # use the same http session for all requests
         self.user_id = str(uuid.uuid4())
         self.session_id = str(uuid.uuid4())
-        self.headers = {"Cookie":f"SESSIONID:{self.session_id},USERID:{self.user_id}"}
-        # normalize cookie seperator on ',' for the http traffic
+        self.headers = {"Cookie":f"SESSIONID:{self.session_id};USERID:{self.user_id};"}
+        # normalize cookie seperator on ';' for the http traffic
         # self.client.cookies.set("SESSIONID", self.session_id)
         # self.client.cookies.set("USERID", self.user_id)
         ctx = baggage.set_baggage("session.id", self.session_id)
