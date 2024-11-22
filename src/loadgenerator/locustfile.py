@@ -110,11 +110,11 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def index(self):
-        self.client.get("/")
+        self.client.get("/", self.headers)
 
     @task(10)
     def browse_product(self):
-        self.client.get("/api/products/" + random.choice(products))
+        self.client.get("/api/products/" + random.choice(products), self.headers)
 
     @task(3)
     def get_recommendations(self):
@@ -122,23 +122,23 @@ class WebsiteUser(HttpUser):
             "productIds": [random.choice(products)],
             "sessionId": self.session_id,
         }
-        self.client.get("/api/recommendations", params=params)
+        self.client.get("/api/recommendations", params=params, headers=self.headers)
 
     @task(3)
     def get_ads(self):
         params = {
             "contextKeys": [random.choice(categories)],
         }
-        self.client.get("/api/data/", params=params)
+        self.client.get("/api/data/", params=params, headers=self.headers)
 
     @task(3)
     def view_cart(self):
-        self.client.get("/api/cart")
+        self.client.get("/api/cart", self.headers)
 
     @task(2)
     def add_to_cart(self, user=""):
         product = random.choice(products)
-        self.client.get("/api/products/" + product) 
+        self.client.get("/api/products/" + product, self.headers) 
         cart_item = {
             "item": {
                 "productId": product,
@@ -149,7 +149,7 @@ class WebsiteUser(HttpUser):
         params = {
             "sessionId":  self.session_id,
         }
-        self.client.post("/api/cart", params=params, json=cart_item)
+        self.client.post("/api/cart", params=params, json=cart_item, headers=self.headers)
 
     @task(1)
     def checkout(self):
@@ -157,7 +157,7 @@ class WebsiteUser(HttpUser):
         self.add_to_cart(user=self.user_id)
         checkout_person = random.choice(people)
         checkout_person["userId"] = self.user_id
-        self.client.post("/api/checkout", json=checkout_person)
+        self.client.post("/api/checkout", json=checkout_person, headers=self.headers)
 
     @task(1)
     def checkout_multi(self):
@@ -166,19 +166,21 @@ class WebsiteUser(HttpUser):
             self.add_to_cart(user=self.user_id)
         checkout_person = random.choice(people)
         checkout_person["userId"] = self.user_id
-        self.client.post("/api/checkout", json=checkout_person)
+        self.client.post("/api/checkout", json=checkout_person, headers=self.headers)
 
     @task(5)
     def flood_home(self):
         for _ in range(0, get_flagd_value("loadgeneratorFloodHomepage")):
-            self.client.get("/")
+            self.client.get("/", self.headers)
 
     def on_start(self):
         # use the same http session for all requests
         self.user_id = str(uuid.uuid4())
         self.session_id = str(uuid.uuid4())
-        self.client.cookies.set("SESSIONID", self.session_id)
-        self.client.cookies.set("USERID", self.user_id)
+        self.headers = {"Cookie":f"SESSIONID:{self.session_id},USERID:{self.user_id}"}
+        # normalize cookie seperator on ',' for the http traffic
+        # self.client.cookies.set("SESSIONID", self.session_id)
+        # self.client.cookies.set("USERID", self.user_id)
         ctx = baggage.set_baggage("session.id", self.session_id)
         ctx = baggage.set_baggage("user.id", self.user_id)
         ctx = baggage.set_baggage("synthetic_request", "true", context=ctx)
