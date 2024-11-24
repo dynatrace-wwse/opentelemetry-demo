@@ -1,0 +1,29 @@
+metadata:
+  labels:
+    dt.owner: "dev-team-microservices"
+spec:
+  template: 
+    metadata:
+      labels:
+        dt.owner: "dev-team-microservices"
+      annotations:
+        oneagent.dynatrace.com/inject: "true"
+    spec:
+      containers:
+        - name: accountingservice
+          image: IMAGE_PLACEHOLDER #Get's replaced by the ci/cd pipeline
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 512Mi  # To run OneAgent we recommend 512Mi, Original 120Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
+          env:
+            - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+              value: "info"
+            - name: DT_LOGCON_PROC
+              value: "stdout"
+            - name: DT_LOGGING_DESTINATION
+              value: "stdout" 
+            - name: DT_LOGGING_DOTNET_FLAGS
+              value: 'Propagator=true'  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+            - name: OTEL_DOTNET_AUTO_INSTRUMENTATION_ENABLED
+              value: 'false' # Avoid duplicate spans from OA and Otel -  https://opentelemetry.io/docs/zero-code/net/instrumentations/
