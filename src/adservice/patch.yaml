@@ -8,6 +8,7 @@ spec:
         dt.owner: "dev-team-microservices"
       annotations:
         oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: "Java"
     spec:
       containers:
         - name: adservice
@@ -21,10 +22,6 @@ spec:
               value: "main"   
             - name: DT_LIVEDEBUGGER_REMOTE_ORIGIN # https://www.dynatrace.com/support/help/shortlink/agent-logging
               value: "GITLAB_URL_PLACEHOLDER/Otel-App/Ad_Service"   
-            - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
-              value: "info" 
-            - name: DT_LOGCON_PROC
-              value: "stdout" 
             - name: DT_RELEASE_VERSION
               value: "VERSION_PLACEHOLDER" 
             - name: DT_RELEASE_BUILD_VERSION
@@ -32,10 +29,22 @@ spec:
             - name: DT_RELEASE_PRODUCT
               value: "PRODUCT_PLACEHOLDER" 
             - name: DT_RELEASE_STAGE
-              value: "STAGE_PLACEHOLDER" 
+              value: "STAGE_PLACEHOLDER"
+            - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+              value: "" # info
+            - name: DT_LOGCON_PROC
+              value: "" # stdout
             - name: DT_LOGGING_DESTINATION
-              value: "stdout" 
+              value: "" # stdout 
             - name: DT_LOGGING_JAVA_FLAGS
-              value: 'Propagator=true'  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+              value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
             - name: JAVA_TOOL_OPTIONS
-              value: '' # '-javaagent:/usr/src/app/opentelemetry-javaagent.jar' # - Duplicate spans from OA and Otel are avoided automatically
+              value: '' # '-javaagent:/usr/src/app/opentelemetry-javaagent.jar' # - Duplicate spans from OA and Otel are avoided automatically - https://docs.dynatrace.com/docs/shortlink/opentelemetry-oneagent#java-span-dropping
+            - name: OTEL_COLLECTOR_NAME
+              value: 'dynatrace-otel-gateway-collector'
+            - name: OTEL_TRACES_EXPORTER
+              value: 'none' # 'console', 'none', 'otlp'
+            - name: OTEL_LOGS_EXPORTER
+              value: 'none' # 'console', 'none', 'otlp'
+            - name: OTEL_METRICS_EXPORTER
+              value: 'console,otlp' # 'console', 'none', 'otlp'
