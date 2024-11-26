@@ -13,6 +13,18 @@ spec:
             limits:
               memory: 512Mi  # To run OneAgent we reccomend 512Mi, Original 120Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
           env:
+            - name: DT_LIVEDEBUGGER_COMMIT # https://www.dynatrace.com/support/help/shortlink/agent-logging
+              value: "main"   
+            - name: DT_LIVEDEBUGGER_REMOTE_ORIGIN # https://www.dynatrace.com/support/help/shortlink/agent-logging
+              value: "GITLAB_URL_PLACEHOLDER/Otel-App/paymentservice"   
+            - name: DT_RELEASE_VERSION
+              value: "VERSION_PLACEHOLDER" 
+            - name: DT_RELEASE_BUILD_VERSION
+              value: "BUILDVERSION_PLACEHOLDER" 
+            - name: DT_RELEASE_PRODUCT
+              value: "PRODUCT_PLACEHOLDER" 
+            - name: DT_RELEASE_STAGE
+              value: "STAGE_PLACEHOLDER"
             - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
               value: "" # info
             - name: DT_LOGCON_PROC
