@@ -21,7 +21,7 @@ spec:
             - name: DT_LIVEDEBUGGER_COMMIT # https://www.dynatrace.com/support/help/shortlink/agent-logging
               value: "main"   
             - name: DT_LIVEDEBUGGER_REMOTE_ORIGIN # https://www.dynatrace.com/support/help/shortlink/agent-logging
-              value: "GITLAB_URL_PLACEHOLDER/Otel-App/Ad_Service"   
+              value: "GITLAB_URL_PLACEHOLDER/Otel-App/adservice"   
             - name: DT_RELEASE_VERSION
               value: "VERSION_PLACEHOLDER" 
             - name: DT_RELEASE_BUILD_VERSION
