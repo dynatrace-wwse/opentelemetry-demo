@@ -34,6 +34,24 @@ renameImages() {
    done
 }
 
+pushImagesBadNaming() {
+   ## now loop through the above array
+   for IMAGE in "${IMAGES[@]}"; do
+      printf "pushing image: ${NEWSERVER}:${NEWTAG}-${IMAGE} \n"
+      docker push ${NEWSERVER}:${NEWTAG}-${IMAGE}
+   done
+}
+
+
+pushImages() {
+   ## now loop through the above array
+   for IMAGE in "${IMAGES[@]}"; do
+      printf "pushing image: ${NEWSERVER}/${IMAGE}:${NEWTAG} \n"
+      docker push ${NEWSERVER}/${IMAGE}:${NEWTAG}
+   done
+}
+
+
 export RELEASE_VERSION='1.11.1'
 export IMAGE_NAME=shinojosa/astroshop
 export DEMO_VERSION='1.11.1'
