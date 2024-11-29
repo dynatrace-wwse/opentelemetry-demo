@@ -6,16 +6,16 @@
 ## declare an array variable
 declare -a IMAGES=("accountingservice" "adservice" "cartservice" "checkoutservice" "currencyservice" "emailservice" "frauddetectionservice" "frontend" "frontendproxy" "imageprovider" "kafka" "loadgenerator" "paymentservice" "productcatalogservice" "quoteservice" "recommendationservice" "shippingservice")
 
-OLDSERVER="ghcr.io/open-telemetry/demo"
+OLDSERVER="shinojosa/astroshop"
 NEWSERVER="shinojosa/astroshop"
-OLDTAG="0.32.8"
-NEWTAG="0.32.8"
+OLDTAG="latest"
+NEWTAG="1.11.1"
 
-renameImages() {
+retagImages() {
    ## now loop through the above array
    for IMAGE in "${IMAGES[@]}"; do
-      printf "renaming & tagging: ${OLDSERVER}:${OLDTAG}-${IMAGE} ---> ${NEWSERVER}/${IMAGE}:${NEWTAG} \n"
-      docker image tag ${OLDSERVER}:${OLDTAG}-${IMAGE} ${NEWSERVER}/${IMAGE}:${NEWTAG}
+      printf "retaging: ${OLDSERVER}:${OLDTAG}-${IMAGE} ---> ${NEWSERVER}:${NEWTAG}-${IMAGE} \n"
+      docker image tag ${OLDSERVER}:${OLDTAG}-${IMAGE} ---> ${NEWSERVER}:${NEWTAG}-${IMAGE}
    done
 }
 
@@ -23,6 +23,14 @@ pushImages() {
    for IMAGE in "${IMAGES[@]}"; do
       printf "pushing image to repo ${NEWSERVER}/${IMAGE}:${NEWTAG} \n"
       docker push ${NEWSERVER}/${IMAGE}:${NEWTAG}
+   done
+}
+
+renameImages() {
+   ## now loop through the above array
+   for IMAGE in "${IMAGES[@]}"; do
+      printf "renaming: ${OLDSERVER}:${OLDTAG}-${IMAGE} ---> ${NEWSERVER}/${IMAGE}:${NEWTAG} \n"
+      docker image tag ${OLDSERVER}:${OLDTAG}-${IMAGE} ${NEWSERVER}/${IMAGE}:${NEWTAG}
    done
 }
 
