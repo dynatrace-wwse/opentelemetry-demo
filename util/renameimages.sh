@@ -15,7 +15,7 @@ retagImages() {
    ## now loop through the above array
    for IMAGE in "${IMAGES[@]}"; do
       printf "retaging: ${OLDSERVER}:${OLDTAG}-${IMAGE} ---> ${NEWSERVER}:${NEWTAG}-${IMAGE} \n"
-      docker image tag ${OLDSERVER}:${OLDTAG}-${IMAGE} ---> ${NEWSERVER}:${NEWTAG}-${IMAGE}
+      docker image tag ${OLDSERVER}:${OLDTAG}-${IMAGE} ${NEWSERVER}:${NEWTAG}-${IMAGE}
    done
 }
 
