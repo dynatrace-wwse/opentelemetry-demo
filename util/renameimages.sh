@@ -42,16 +42,20 @@ pushImagesBadNaming() {
    done
 }
 
-
 pushImages() {
-   ## now loop through the above array
+   ## now loop through the above arrayoush
    for IMAGE in "${IMAGES[@]}"; do
       printf "pushing image: ${NEWSERVER}/${IMAGE}:${NEWTAG} \n"
       docker push ${NEWSERVER}/${IMAGE}:${NEWTAG}
    done
 }
 
+forCompiling() {
+   # Needed on MAC for crosscompiling
+   export DOCKER_DEFAULT_PLATFORM=linux/amd64
+   # somehow are not overwritten hence..
+   export IMAGE_NAME=shinojosa/astroshop
+   export RELEASE_VERSION='1.11.1'
+   export DEMO_VERSION='1.11.1'
 
-export RELEASE_VERSION='1.11.1'
-export IMAGE_NAME=shinojosa/astroshop
-export DEMO_VERSION='1.11.1'
+}
