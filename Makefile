@@ -79,6 +79,14 @@ install-tools: $(MISSPELL)
 build:
 	$(DOCKER_COMPOSE_CMD) build
 
+.PHONY: build-dockerhub
+build-dockerhub:
+	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml build
+	
+.PHONY: push-dockerhub
+push-dockerhub:
+	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml push
+
 .PHONY: build-and-push-dockerhub
 build-and-push-dockerhub:
 	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml build
