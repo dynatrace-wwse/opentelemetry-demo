@@ -556,11 +556,11 @@ services:
   shippingservice:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-shippingservice
     container_name: shipping-service
-    build:
-      context: ./
-      dockerfile: ${SHIPPING_SERVICE_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+    #build:
+    #  context: ./
+    #  dockerfile: ${SHIPPING_SERVICE_DOCKERFILE}
+    #  cache_from:
+    #    - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     deploy:
       resources:
         limits:

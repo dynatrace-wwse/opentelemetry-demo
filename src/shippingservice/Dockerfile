@@ -2,14 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=x86_64 rust:1.76 as builder
+FROM --platform=${BUILDPLATFORM} rust:1.76 as builder
 
 ARG TARGETARCH TARGETPLATFORM BUILDPLATFORM
 
-RUN echo Building on x86_64 for ${TARGETPLATFORM}
+RUN echo Building on ${BUILDPLATFORM} for ${TARGETPLATFORM}
 
 # Check if we are doing cross-compilation, if so we need to add in some more dependencies and run rustup
-RUN if [ "${TARGETPLATFORM}" = "x86_64" ] ; then \
+RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
         apt-get update && apt-get install --no-install-recommends -y g++ libc6-dev libprotobuf-dev protobuf-compiler ca-certificates; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ] ; then \
         apt-get update && apt-get install --no-install-recommends -y g++-aarch64-linux-gnu libc6-dev-arm64-cross libprotobuf-dev protobuf-compiler ca-certificates && \
@@ -26,7 +26,7 @@ COPY /src/shippingservice/ /app/
 COPY /pb/ /app/proto/
 
 # Compile or crosscompile
-RUN if [ "${TARGETPLATFORM}" = "x86_64" ] ; then \
+RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
         cargo build -r --features="dockerproto"; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ] ; then \
         env CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
