@@ -1,0 +1,24 @@
+metadata:
+  labels:
+    dt.owner: "qa-team"
+spec:
+  template: 
+    metadata:
+      labels:
+        dt.owner: "qa-team"
+      annotations:
+        oneagent.dynatrace.com/inject: "true"
+    spec:
+      containers:
+        - name: loadgenerator
+          image: IMAGE_PLACEHOLDER
+          resources:
+            limits:
+              memory: 2096Mi
+          env:
+            - name: LOCUST_HEADLESS
+              value: "true"
+            - name: LOCUST_USERS
+              value: "20"
+            - name: LOCUST_SPAWN_RATE
+              value: "5"
