@@ -8,13 +8,21 @@ import { metrics } from '@opentelemetry/api';
 
 const meter = metrics.getMeter('frontend');
 const requestCounter = meter.createCounter('app.frontend.requests');
+const tracer = trace.getTracer('frontend');
 
 const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
   return async (request, response) => {
     const {method, url = ''} = request;
     const [target] = url.split('?');
 
-    const span = trace.getSpan(context.active()) as Span;
+    // Check if we have an active span if not start a new one to maintain the existing behavior
+    let span = trace.getSpan(context.active()) as Span;
+    let startedSpan = false;
+    if (!span)
+    {
+      span = tracer.startSpan('InstrumentationMiddleware');
+      startedSpan = true;
+    }
 
     let httpStatus = 200;
     try {
@@ -28,6 +36,10 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
     } finally {
       requestCounter.add(1, { method, target, status: httpStatus });
       span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, httpStatus);
+      // Make sure we cleanup by closing the span if we started it.
+      if (startedSpan) {
+        span.end();
+      }
     }
   };
 };
