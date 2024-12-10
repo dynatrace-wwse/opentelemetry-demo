@@ -58,3 +58,13 @@ test/tracetesting/tracetesting-vars.yaml
 /src/currencyservice/proto
 /src/checkoutservice/genproto
 /src/accountingservice/genproto
+
+
+# Generated files
+**/gen/**
+
+# All tmp files/folders
+**tmp**
+
+# log files
+**.log
