@@ -3,7 +3,7 @@
 
 
 
-JMX_FILE=$AGENT_RELEASEDIRECTORY/$RELEASE_PRIMARYARTIFACTSOURCEALIAS/extras/jmeter/Test_Banking_Process.jmx
+JMX_FILE=$AGENT_RELEASEDIRECTORY/$RELEASE_PRIMARYARTIFACTSOURCEALIAS/extras/jmeter/Test_Astroshop_Process.jmx
 
 start_performance_test() {
 
@@ -21,7 +21,3 @@ start_performance_test
 stop_timestamp=$(date '+%F %H:%M:00')
 echo $stop_timestamp
 echo "##vso[task.setvariable variable=stop_timestamp]$stop_timestamp"
-
-
-
-# AGENT_RELEASEDIRECTORY=/home/daniel_braaf/myagent/_work/r3/a /RELEASE_PRIMARYARTIFACTSOURCEALIAS/
