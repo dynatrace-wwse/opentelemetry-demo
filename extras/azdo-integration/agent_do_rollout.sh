@@ -14,8 +14,8 @@ setDefaultValues() {
     JVM_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+ExitOnOutOfMemoryError -Xms256m -Xmx512m"
     LOG_LEVEL="info"
     imagePullPolicy="Always"
-    APPLICATION="banking"
-    ENVIRONMENT="development"
+    APPLICATION="astroshop"
+    ENVIRONMENT="staging"
     NAMESPACE=${ENVIRONMENT}-${APPLICATION}
     YAMLFILE=$(date '+%Y-%m-%d_%H_%M_%S').yaml
     RESET_DB=false
@@ -262,7 +262,7 @@ echo "##vso[task.setvariable variable=PROBLEM]$PROBLEM"
 
 exportVariables
 
-applyDeploymentChange
+# applyDeploymentChange
 
 printDeployments
 
