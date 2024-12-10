@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-
-
 JMX_FILE=$AGENT_RELEASEDIRECTORY/$RELEASE_PRIMARYARTIFACTSOURCEALIAS/extras/jmeter/Test_Astroshop_Process.jmx
 
 start_performance_test() {
