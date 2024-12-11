@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: frontendproxy
+    app.kubernetes.io/instance: astroshop
+    app.kubernetes.io/name: astroshop-frontendproxy
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/version: 1.11.1
+    opentelemetry.io/name: astroshop-frontendproxy
+  name: astroshop-frontendproxy
+  namespace: staging-astroshop
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: tcp-service
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: astroshop-frontendproxy
+  sessionAffinity: None
+  type: ClusterIP

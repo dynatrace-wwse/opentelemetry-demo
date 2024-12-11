@@ -1,0 +1,506 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: adservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-adservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-adservice
+    name: astroshop-adservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-adservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: cartservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-cartservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-cartservice
+    name: astroshop-cartservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-cartservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: checkoutservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-checkoutservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-checkoutservice
+    name: astroshop-checkoutservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-checkoutservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: currencyservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-currencyservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-currencyservice
+    name: astroshop-currencyservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-currencyservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: emailservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-emailservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-emailservice
+    name: astroshop-emailservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-emailservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: flagd
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-flagd
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-flagd
+    name: astroshop-flagd
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8013
+      protocol: TCP
+      targetPort: 8013
+    selector:
+      opentelemetry.io/name: astroshop-flagd
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: frontend
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-frontend
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-frontend
+    name: astroshop-frontend
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-frontend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+    labels:
+      app.kubernetes.io/component: frontendproxy
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-frontendproxy
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-frontendproxy
+    name: astroshop-frontendproxy
+    namespace: staging-astroshop
+  spec:
+    allocateLoadBalancerNodePorts: true
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-frontendproxy
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 10.0.103.174
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: imageprovider
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-imageprovider
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-imageprovider
+    name: astroshop-imageprovider
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    selector:
+      opentelemetry.io/name: astroshop-imageprovider
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: kafka
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-kafka
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-kafka
+    name: astroshop-kafka
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: plaintext
+      port: 9092
+      protocol: TCP
+      targetPort: 9092
+    - name: controller
+      port: 9093
+      protocol: TCP
+      targetPort: 9093
+    selector:
+      opentelemetry.io/name: astroshop-kafka
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: loadgenerator
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-loadgenerator
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-loadgenerator
+    name: astroshop-loadgenerator
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8089
+      protocol: TCP
+      targetPort: 8089
+    selector:
+      opentelemetry.io/name: astroshop-loadgenerator
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: paymentservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-paymentservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-paymentservice
+    name: astroshop-paymentservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-paymentservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: productcatalogservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-productcatalogservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-productcatalogservice
+    name: astroshop-productcatalogservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-productcatalogservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: quoteservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-quoteservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-quoteservice
+    name: astroshop-quoteservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-quoteservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: recommendationservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-recommendationservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-recommendationservice
+    name: astroshop-recommendationservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-recommendationservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: shippingservice
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-shippingservice
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-shippingservice
+    name: astroshop-shippingservice
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-service
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      opentelemetry.io/name: astroshop-shippingservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app.kubernetes.io/component: valkey
+      app.kubernetes.io/instance: astroshop
+      app.kubernetes.io/name: astroshop-valkey
+      app.kubernetes.io/part-of: opentelemetry-demo
+      app.kubernetes.io/version: 1.11.1
+      opentelemetry.io/name: astroshop-valkey
+    name: astroshop-valkey
+    namespace: staging-astroshop
+  spec:
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: valkey
+      port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      opentelemetry.io/name: astroshop-valkey
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:

@@ -68,3 +68,6 @@ test/tracetesting/tracetesting-vars.yaml
 
 # log files
 **.log
+
+# mine
+**/**-mine.*
