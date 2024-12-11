@@ -105,6 +105,32 @@ build-env-file:
 	cp .env .ghcr.env
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
 	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
+.PHONY: build-and-push
+build-and-push:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build --push
+
+# Create multiplatform builder for buildx
+.PHONY: create-multiplatform-builder
+create-multiplatform-builder:
+	docker buildx create --name otel-demo-builder --bootstrap --use --driver docker-container --config ./buildkitd.toml
+
+# Remove multiplatform builder for buildx
+.PHONY: remove-multiplatform-builder
+remove-multiplatform-builder:
+	docker buildx rm otel-demo-builder
+
+# Build and push multiplatform images (linux/amd64, linux/arm64) using buildx.
+# Requires docker with buildx enabled and a multi-platform capable builder in use.
+# Docker needs to be configured to use containerd storage for images to be loaded into the local registry.
+.PHONY: build-multiplatform
+build-multiplatform:
+	# Because buildx bake does not support --env-file yet, we need to load it into the environment first.
+	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --load --set "*.platform=linux/amd64,linux/arm64"
+
+.PHONY: build-multiplatform-and-push
+build-multiplatform-and-push:
+    # Because buildx bake does not support --env-file yet, we need to load it into the environment first.
+	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
 
 .PHONY: run-tests
 run-tests:
@@ -132,6 +158,25 @@ generate-kubernetes-manifests:
 	echo "metadata:" >> kubernetes/opentelemetry-demo.yaml
 	echo "  name: otel-demo" >> kubernetes/opentelemetry-demo.yaml
 	helm template opentelemetry-demo open-telemetry/opentelemetry-demo --namespace otel-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' >> kubernetes/opentelemetry-demo.yaml
+
+.PHONY: docker-generate-protobuf
+docker-generate-protobuf:
+	./docker-gen-proto.sh
+
+.PHONY: clean
+clean:
+	rm -rf ./src/{checkoutservice,productcatalogservice}/genproto/oteldemo/
+	rm -rf ./src/recommendationservice/{demo_pb2,demo_pb2_grpc}.py
+
+.PHONY: check-clean-work-tree
+check-clean-work-tree:
+	@if ! git diff --quiet; then \
+	  echo; \
+	  echo 'Working tree is not clean, did you forget to run "make docker-generate-protobuf"?'; \
+	  echo; \
+	  git status; \
+	  exit 1; \
+	fi
 
 .PHONY: start
 start:

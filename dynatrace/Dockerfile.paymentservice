@@ -1,0 +1,27 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Dynatrace list of officially supported version of NodeJS - https://docs.dynatrace.com/docs/ingest-from/technology-support/application-software/nodejs#support-and-desupport
+FROM node:20-alpine AS build
+
+WORKDIR /usr/src/app/
+
+COPY ./src/paymentservice/package*.json ./
+
+RUN apk add --no-cache python3 make g++ && npm ci --omit=dev
+
+# -----------------------------------------------------------------------------
+
+# Dynatrace list of officially supported version of NodeJS - https://docs.dynatrace.com/docs/ingest-from/technology-support/application-software/nodejs#support-and-desupport
+FROM node:20-alpine
+
+USER node
+WORKDIR /usr/src/app/
+ENV NODE_ENV=production
+
+COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
+COPY ./src/paymentservice/ ./
+COPY ./pb/demo.proto ./
+
+EXPOSE ${PAYMENT_SERVICE_PORT}
+ENTRYPOINT ["node","index.js"]
