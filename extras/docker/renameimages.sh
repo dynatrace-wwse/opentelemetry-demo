@@ -8,8 +8,8 @@ declare -a IMAGES=("accountingservice" "adservice" "cartservice" "checkoutservic
 
 OLDSERVER="shinojosa/astroshop"
 NEWSERVER="shinojosa/astroshop"
-OLDTAG="latest"
-NEWTAG="1.11.1"
+OLDTAG="1.11.1"
+NEWTAG="1.12.0"
 
 retagImages() {
    ## now loop through the above array
@@ -59,3 +59,29 @@ forCompiling() {
    export DEMO_VERSION='1.11.1'
 
 }
+
+
+
+
+
+
+
+
+# - 0
+#   productcatalogservice
+#   emailservice
+#   imageprovider
+#   kafka
+#   frontendproxy
+#   frauddetectionservice
+#   adservice
+#   frontend
+#   currencyservice
+#   accountingservice
+#   checkoutservice
+#   recommendationservice
+#   loadgenerator
+#   cartservice
+#   quoteservice
+#   flagdui
+#   paymentservice

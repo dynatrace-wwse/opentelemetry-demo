@@ -86,6 +86,22 @@ open-telemetry/opentelemetry-demo \
 --create-namespace \
 --version 0.32.8
 
+
+helm upgrade --install -f my-helm.yaml \
+astroshop \
+open-telemetry/opentelemetry-demo \
+--namespace staging-astroshop \
+--set default.image.repository=docker.io/shinojosa/astroshop \
+--set default.image.tag=1.11.1 \
+--create-namespace \
+--version 0.32.8
+
+helm upgrade --install -f my-helm.yaml astroshop open-telemetry/opentelemetry-demo --namespace staging-astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.11.2 --create-namespace --version 0.32.8
+
+helm upgrade astroshop open-telemetry/opentelemetry-demo --namespace staging-astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.11.2 --create-namespace --version 0.32.9
+#helm history astroshop --namespace staging-astroshop
+
+
 # https://github.com/keyoke/opentelemetry-demo/
 
 
