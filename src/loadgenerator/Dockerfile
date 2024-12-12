@@ -15,7 +15,7 @@ RUN pip install --prefix="/reqs" -r requirements.txt
 FROM base
 WORKDIR /usr/src/app/
 COPY --from=builder /reqs /usr/local
-COPY ./src/loadgenerator/locustfile.py .
+COPY ./dynatrace/locustfile.py .
 COPY ./src/loadgenerator/people.json .
 ENV LOCUST_PLAYWRIGHT=1
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
