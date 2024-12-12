@@ -88,9 +88,9 @@ open-telemetry/opentelemetry-demo \
 helm upgrade --install -f my-helm.yaml \
 astroshop \
 open-telemetry/opentelemetry-demo \
---namespace staging-astroshop \
+--namespace astroshop \
 --set default.image.repository=docker.io/shinojosa/astroshop \
---set default.image.tag=1.11.1 \
+--set default.image.tag=1.12.0 \
 --create-namespace \
 --version 0.32.8
 
