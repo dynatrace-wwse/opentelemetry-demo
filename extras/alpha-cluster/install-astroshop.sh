@@ -124,9 +124,7 @@ helm upgrade --install -f ./install/bring-your-own-observability-helm-values.yam
 
 
 # Build the opentelemtery-demo application on host, need to export variables and set env.dockerhub file
-export RELEASE_VERSION='1.11.1'
-export IMAGE_NAME=shinojosa/oteldemo
-export DEMO_VERSION='1.11.1'
+export RELEASE_VERSION='1.12.0' ;  export IMAGE_NAME=shinojosa/astroshop ; export DEMO_VERSION='1.12.0'
 
 # Make sure we label the k8s namespace for OA injection
 kubectl label namespace astroshop dynatrace.com/inject=true

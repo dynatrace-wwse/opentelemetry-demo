@@ -10,7 +10,7 @@ TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 
-DOCKER_COMPOSE_CMD ?= docker compose
+DOCKER_COMPOSE_CMD ?= docker-compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
