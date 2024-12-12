@@ -65,8 +65,6 @@ gcloud compute ssh --zone "us-central1-a" "hot-diagnostics-alpha-remote-agent-az
 
 
 
-
-
 #helm upgrade --install -f ./install/bring-your-own-observability-helm-values.yaml \
 #astroshop \
 #open-telemetry/opentelemetry-demo \
@@ -96,18 +94,32 @@ open-telemetry/opentelemetry-demo \
 --create-namespace \
 --version 0.32.8
 
-helm upgrade --install -f my-helm.yaml astroshop open-telemetry/opentelemetry-demo --namespace staging-astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.11.2 --create-namespace --version 0.32.8
 
-helm upgrade astroshop open-telemetry/opentelemetry-demo --namespace staging-astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.11.2 --create-namespace --version 0.32.9
+#
+#  Installation of Otel with DT Changes using HELM
+#
+# With no HELM Values
+helm upgrade --install astroshop open-telemetry/opentelemetry-demo --namespace astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.12.0 --create-namespace --version 0.32.8
+# With HELM Values
+helm upgrade --install -f my-helm.yaml astroshop open-telemetry/opentelemetry-demo --namespace astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.12.0 --create-namespace --version 0.32.8
+
+
+helm upgrade astroshop open-telemetry/opentelemetry-demo --namespace staging-astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.11.2 --create-namespace --version 0.32.8
 #helm history astroshop --namespace staging-astroshop
 
 
 # https://github.com/keyoke/opentelemetry-demo/
+# TODO: Different version as ACE, in ACE 1.3.2
+helm upgrade --install dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operator \
+--create-namespace \
+--namespace dynatrace \
+--atomic \
+--version 1.3.2 \
 
 
 kubectl apply -f dynakube-alpha.yml --namespace dynatrace
 
-# TODO: is FluentBit needed? 
+# TODO: is FluentBit needed?  -> NO
 helm repo add fluent https://fluent.github.io/helm-charts
 helm repo update
 
@@ -124,6 +136,7 @@ helm upgrade --install -f ./install/bring-your-own-observability-helm-values.yam
 
 
 # Build the opentelemtery-demo application on host, need to export variables and set env.dockerhub file
+git clone https://github.com/keyoke/opentelemetry-demo/tree/features/dynatrace-demo
 export RELEASE_VERSION='1.11.1'
 export IMAGE_NAME=shinojosa/oteldemo
 export DEMO_VERSION='1.11.1'
@@ -135,3 +148,16 @@ kubectl label namespace astroshop dynatrace.com/inject=true
 bash patch.sh
 #kubectl delete deployment astroshop-frontendproxy --namespace astroshop
 #kubectl delete service astroshop-frontendproxy --namespace astroshop
+
+
+# Install openteöemetry 
+
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
+
+helm install opentelemetry-operator open-telemetry/opentelemetry-operator --set "manager.collectorImage.repository=hcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector:0.14.0" --create-namespace --namespace opentelemetry-operator-system --version 0.67.0
+
+kubectl create secret generic dynatrace-otelcol-dt-api-credentials --from-literal=DT_ENDPOINT=https://sro97894.live.dynatrace.com/api/v2/otlp --from-literal=DT_API_TOKEN=dt0c01.4IM3DHAT2JIT5OFNLEHHDIML.xxx --namespace astroshop
+
+kubectl apply -f otel_collector_gateway.yaml --namespace astroshop
+kubectl apply -f otel_k8s_enrichment.yaml
