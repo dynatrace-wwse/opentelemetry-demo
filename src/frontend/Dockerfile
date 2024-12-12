@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
+# Dynatrace list of officially supported version of NodeJS - https://docs.dynatrace.com/docs/ingest-from/technology-support/application-software/nodejs#support-and-desupport
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 
@@ -20,6 +20,7 @@ COPY ./src/frontend .
 RUN npm run grpc:generate
 RUN npm run build
 
+# Dynatrace list of officially supported version of NodeJS - https://docs.dynatrace.com/docs/ingest-from/technology-support/application-software/nodejs#support-and-desupport
 FROM node:20-alpine AS runner
 WORKDIR /app
 RUN apk add --no-cache protobuf-dev protoc
@@ -43,5 +44,5 @@ USER nextjs
 ENV PORT=8080
 EXPOSE ${PORT}
 
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["node","server.js"]
 

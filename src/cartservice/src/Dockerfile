@@ -25,7 +25,8 @@ COPY ./pb/ ./pb/
 
 RUN dotnet restore ./src/cartservice.csproj -r linux-musl-$TARGETARCH
 
-RUN dotnet publish ./src/cartservice.csproj -r linux-musl-$TARGETARCH --no-restore -o /cartservice
+# Dynatrace does not currently support PublishSingleFile - [TODO: Add link to official documentation]
+RUN dotnet publish ./src/cartservice.csproj -v d -r linux-musl-$TARGETARCH -p:PublishSingleFile=false --no-restore -o /cartservice
 
 # -----------------------------------------------------------------------------
 
