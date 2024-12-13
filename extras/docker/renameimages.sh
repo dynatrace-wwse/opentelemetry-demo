@@ -8,7 +8,7 @@ declare -a IMAGES=("accountingservice" "adservice" "cartservice" "checkoutservic
 
 OLDSERVER="shinojosa/astroshop"
 NEWSERVER="shinojosa/astroshop"
-OLDTAG="1.11.1"
+OLDTAG="1.12.0"
 NEWTAG="1.12.0"
 
 retagImages() {
