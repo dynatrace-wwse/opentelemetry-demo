@@ -12,9 +12,18 @@ helm upgrade --install dynatrace-operator oci://public.ecr.aws/dynatrace/dynatra
 --atomic \
 --version 1.3.2
 
-kubectl -n dynatrace create secret generic [DYNAKUBE_NAME] --from-literal="apiToken=<DT_API_TOKEN>" --from-literal="dataIngestToken=<DT_INGEST_TOKEN>"
-
+#TODO: Document, we are using automatic-injection=true in the dynakube (see dynakube-alpha)
 kubectl apply -f dynakube-oteldemo.yaml --namespace dynatrace
+
+
+# TODO: build dependencies?
+helm dependency build ./dt-otel-demo-helm/
+
+# Installing Astroshop
+helm upgrade --install astroshop -f ./dt-otel-demo-helm-deployments/values-astro.yaml --set collector_tenant_endpoint=$DT_ENDPOINT --set collector_tenant_token=$DT_API_TOKEN -n astroshop ./dt-otel-demo-helm
+
+# Upgrading Astroshop (tenant is stored?)
+helm upgrade astroshop open-telemetry/opentelemetry-demo --namespace staging-astroshop --set default.image.repository=docker.io/shinojosa/astroshop --set default.image.tag=1.11.2 --create-namespace --version 0.32.8
 
 
 # INSTALL OPENTEL-OPERATOR
@@ -69,7 +78,7 @@ gcloud compute ssh --zone "us-central1-a" "hot-diagnostics-alpha-remote-agent-az
 #astroshop \
 #open-telemetry/opentelemetry-demo \
 #--namespace astroshop \
-#--set default.image.repository=geaksoteldemo.azurecr.io/oteldemo \
+#--set default.image.repository=docker.io/shinojosa/astroshop \
 #--set default.image.tag=1.11.1 \
 #--create-namespace \
 #--version 0.32.8
