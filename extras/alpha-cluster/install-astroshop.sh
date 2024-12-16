@@ -15,11 +15,18 @@ helm upgrade --install dynatrace-operator oci://public.ecr.aws/dynatrace/dynatra
 #TODO: Document, we are using automatic-injection=true in the dynakube (see dynakube-alpha)
 kubectl apply -f dynakube-oteldemo.yaml --namespace dynatrace
 
+# cd ~/repos/perform-2025-hot-dynatrace-for-developers/roles/my-use-case/files/configs/helm$
+
 
 # TODO: build dependencies?
 helm dependency build ./dt-otel-demo-helm/
 
+
+helm upgrade --install astroshop -f ./dt-otel-demo-helm-deployments/values.yaml --set collector_tenant_endpoint=$DT_ENDPOINT --set collector_tenant_token=$DT_API_TOKEN -n astroshop ./dt-otel-demo-helm
+
+
 # Installing Astroshop
+# https://sro97894.live.dynatrace.com/api/v2/otlp 
 helm upgrade --install astroshop -f ./dt-otel-demo-helm-deployments/values-astro.yaml --set collector_tenant_endpoint=$DT_ENDPOINT --set collector_tenant_token=$DT_API_TOKEN -n astroshop ./dt-otel-demo-helm
 
 # Upgrading Astroshop (tenant is stored?)

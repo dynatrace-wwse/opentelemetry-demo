@@ -79,7 +79,7 @@ items:
             value: astroshop-kafka:9092
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.11.1-accountingservice
+          image: shinojosa/astroshop:1.12.0-accountingservice
           imagePullPolicy: Always
           name: accountingservice
           resources:
@@ -182,7 +182,7 @@ items:
             value: none
           - name: OTEL_METRICS_EXPORTER
             value: console,otlp
-          image: shinojosa/astroshop:1.11.1-adservice
+          image: shinojosa/astroshop:1.12.0-adservice
           imagePullPolicy: Always
           name: adservice
           ports:
@@ -291,7 +291,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.11.1-cartservice
+          image: shinojosa/astroshop:1.12.0-cartservice
           imagePullPolicy: Always
           name: cartservice
           ports:
@@ -394,7 +394,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.11.1-checkoutservice
+          image: shinojosa/astroshop:1.12.0-checkoutservice
           imagePullPolicy: Always
           name: checkoutservice
           ports:
@@ -718,7 +718,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318
-          image: shinojosa/astroshop:1.11.1-frauddetectionservice
+          image: shinojosa/astroshop:1.12.0-frauddetectionservice
           imagePullPolicy: Always
           name: frauddetectionservice
           resources:
@@ -844,7 +844,7 @@ items:
           - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
           - name: NEXT_OTEL_VERBOSE
             value: "0"
-          image: shinojosa/astroshop:1.11.1-frontend
+          image: shinojosa/astroshop:1.12.0-frontend
           imagePullPolicy: Always
           name: frontend
           ports:
@@ -1029,7 +1029,7 @@ items:
             value: "4317"
           - name: OTEL_COLLECTOR_HOST
             value: $(OTEL_COLLECTOR_NAME)
-          image: shinojosa/astroshop:1.11.1-imageprovider
+          image: shinojosa/astroshop:1.12.0-imageprovider
           imagePullPolicy: Always
           name: imageprovider
           ports:
@@ -1315,7 +1315,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.11.1-paymentservice
+          image: shinojosa/astroshop:1.12.0-paymentservice
           imagePullPolicy: Always
           name: paymentservice
           ports:
@@ -1397,7 +1397,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.11.1-productcatalogservice
+          image: shinojosa/astroshop:1.12.0-productcatalogservice
           imagePullPolicy: Always
           name: productcatalogservice
           ports:
@@ -1480,7 +1480,7 @@ items:
           - name: OTEL_PHP_DISABLED_INSTRUMENTATIONS
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318
-          image: shinojosa/astroshop:1.11.1-quoteservice
+          image: shinojosa/astroshop:1.12.0-quoteservice
           imagePullPolicy: Always
           name: quoteservice
           ports:
