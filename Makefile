@@ -10,7 +10,7 @@ TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 
-DOCKER_COMPOSE_CMD ?= docker-compose
+DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
@@ -77,7 +77,11 @@ install-tools: $(MISSPELL)
 
 .PHONY: build
 build:
-	$(DOCKER_COMPOSE_CMD) build
+	set -a; . ./.env.override; set +a && $(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build
+
+.PHONY: build-and-push
+build-and-push:
+	set -a; . ./.env.override; set +a && $(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build --push
 
 .PHONY: build-dockerhub
 build-dockerhub:
@@ -105,9 +109,7 @@ build-env-file:
 	cp .env .ghcr.env
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
 	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
-.PHONY: build-and-push
-build-and-push:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build --push
+
 
 # Create multiplatform builder for buildx
 .PHONY: create-multiplatform-builder
