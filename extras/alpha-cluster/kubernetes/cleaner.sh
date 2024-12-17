@@ -5,7 +5,7 @@ FILENAME=services
 EXTENSION=yaml
 
 
-declare -a UNWANTEDLINES=('meta.helm' 'helm.sh/chart' 'uid:' 'creationTime' 'resourceVersion' 'clusterIP' 'app.kubernetes.io/managed-by: Helm' '10.43')
+declare -a UNWANTEDLINES=('cloud.google' 'meta.helm' 'helm.sh/chart' 'uid:' 'creationTime' 'generation' 'resourceVersion' 'clusterIP' 'app.kubernetes.io/managed-by: Helm' '10.')
 
 # type: ClusterIP
 
@@ -22,9 +22,9 @@ cleanFile() {
       printf "Cleaning file : ${FILETOCLEAN} from ${LINE} \n"
       cat $FILECLEAN | grep -v "${LINE}" > $FILECLEAN.tmp
       # Swap files
-      cp $FILECLEAN.tmp $FILECLEAN
+      cp -f $FILECLEAN.tmp $FILECLEAN
    done
 }
 
-copyFile
-cleanFile
+#copyFile
+#cleanFile

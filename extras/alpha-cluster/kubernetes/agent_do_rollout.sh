@@ -9,13 +9,13 @@ setDefaultValues() {
         RELEASE_RELEASEID="001"
     fi
     # Default Variabes
-    REPOSITORY="gcr.io/sales-engineering-emea/bank-of-anthos"
-    VERSION="latest"
+    REPOSITORY="docker.io/shinojosa/astroshop"
+    VERSION="1.12.0"
     JVM_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+ExitOnOutOfMemoryError -Xms256m -Xmx512m"
     LOG_LEVEL="info"
     imagePullPolicy="Always"
-    APPLICATION="banking"
-    ENVIRONMENT="development"
+    APPLICATION="astroshop"
+    ENVIRONMENT="production"
     NAMESPACE=${ENVIRONMENT}-${APPLICATION}
     YAMLFILE=$(date '+%Y-%m-%d_%H_%M_%S').yaml
     RESET_DB=false
@@ -32,6 +32,7 @@ setDefaultValues() {
 
 exportVariables() {
     # Export variables so they are available in the command 'envsubst'
+    # TODO: REPOSITORY, VERSION, NAMESPACE, APPLICATION, ENVIRONMENT
     export REPOSITORY=$REPOSITORY
     export VERSION=$VERSION
     export JVM_OPTS=$JVM_OPTS
@@ -45,9 +46,6 @@ exportVariables() {
     export DT_RELEASE_BUILD_VERSION=$RELEASE_RELEASENAME.$VERSION
     # Envs with problems
     export EXTRA_LATENCY_MILLIS=$EXTRA_LATENCY_MILLIS
-
-    
-
 }
 
 printOutput() {
@@ -78,19 +76,19 @@ calculateVersion() {
     h=$(date +"%I")
     case $h in
     "12" | "04" | "08" )
-        VERSION="1.0.0"
+        VERSION="1.12.0"
         PROBLEM="none"
         ;;
     "01" | "05" | "09")
-        VERSION="1.0.1"
+        VERSION="1.12.1"
         PROBLEM="cpu"
         ;;
     "02" | "06" | "10")
-        VERSION="1.0.2"
+        VERSION="1.12.2"
         PROBLEM="memory"
         ;;
     "03" | "07"| "11")
-        VERSION="1.0.3"
+        VERSION="1.12.3"
         PROBLEM="n+1"
         ;;
     esac
@@ -133,6 +131,7 @@ resetDatabase() {
 createApp(){
 
     exportVariables
+    echo "Creating Application $NAMESPACE in version $VERSION"
 
     # If we are in AZDO then
     if [ -z "$AGENT_RELEASEDIRECTORY" ]; then
@@ -142,16 +141,20 @@ createApp(){
         cd $AGENT_RELEASEDIRECTORY/$RELEASE_PRIMARYARTIFACTSOURCEALIAS/extras/azdo-integration
     fi
 
-    envsubst < banking.yaml > gen/banking-$YAMLFILE
+    envsubst < templates/deployments.yaml > gen/deployments-$YAMLFILE
+    envsubst < templates/services.yaml > gen/services-$YAMLFILE
+    envsubst < templates/flagd-config.yaml > gen/flagd-config-$YAMLFILE
 
-    kubectl apply -f gen/banking-$YAMLFILE -n $NAMESPACE
+    kubectl apply -f gen/deployments-$YAMLFILE -n $NAMESPACE --validate=false
+    kubectl apply -f gen/services-$YAMLFILE -n $NAMESPACE
+    kubectl apply -f gen/flagd-config-$YAMLFILE -n $NAMESPACE
 
 }
 
 applyDeploymentChange() {
     printOutput
 
-    resetDatabase
+    #resetDatabase
 
     #envsubst <cluster/deploy.yaml | deployment-dev.yaml
     # Put in a generated file for logging.
@@ -164,16 +167,18 @@ applyDeploymentChange() {
         cd $AGENT_RELEASEDIRECTORY/$RELEASE_PRIMARYARTIFACTSOURCEALIAS/extras/azdo-integration
     fi
     
-    envsubst < deployments.yaml > gen/deploy-$YAMLFILE
+    envsubst < templates/deployments.yaml > gen/deploy-$YAMLFILE
 
-    kubectl apply -f gen/deploy-$YAMLFILE
-    # If we want to do an inliner
-    # kubectl apply -f <( envsubst < deployment.yaml )
+    echo "Deploying version $VERSION for $NAMESPACE."
+    kubectl apply -f gen/deploy-$YAMLFILE --validate=false
     echo "Waiting for all pods of all deployments to be ready and running..."
+    
+    # If we want to do an inliner
+    #kubectl apply -f <( envsubst < deployment.yaml )
     
     # TODO Fix this and add label to pods, swap for sleep
     #kubectl wait --for=condition=Ready --timeout=300s --all pods --namespace $NAMESPACE || true
-    sleep 150 || true
+    #sleep 150 || true
 }
 
 getNodes() {
@@ -196,7 +201,6 @@ usage() {
     echo "     -e      Environment. Default '$ENVIRONMENT'                "
     echo "             Namespace=Environment-Application                  "
     echo "     -v      Version. Calculated '$VERSION'                     "
-    echo "     -d      Delete Database - Any argument e.g (yes)           "
     echo "     -c      Create Structure (svc, sa, secrets, config)        "
     echo "================================================================"
 }
@@ -228,9 +232,6 @@ while getopts e:v:d:h:c: flag; do
     v) # overwrite version from pipeline
         VERSION=${OPTARG}
         PROBLEM="manual_overwrite"
-        ;;
-    d) # we delete/init the statefulset database
-        RESET_DB=true
         ;;
     h)
         usage
