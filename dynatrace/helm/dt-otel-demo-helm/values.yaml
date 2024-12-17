@@ -16,8 +16,8 @@ opentelemetry-demo:
     accountingService:
       enabled: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-accountingservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-accountingservice
       useDefault:
         env: true
       podAnnotations:
@@ -53,8 +53,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-adservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-adservice
       podAnnotations:
         oneagent.dynatrace.com/inject: "true"
         metadata.dynatrace.com/process.technology: "Java"
@@ -84,8 +84,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-cartservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-cartservice
       podAnnotations:
         oneagent.dynatrace.com/inject: "true"
         metadata.dynatrace.com/process.technology: ".NET" 
@@ -115,8 +115,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-checkoutservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-checkoutservice
       podAnnotations:
         oneagent.dynatrace.com/inject: "false"   
         metadata.dynatrace.com/process.technology: "go"     
@@ -206,8 +206,8 @@ opentelemetry-demo:
         oneagent.dynatrace.com/inject: "false"   
         metadata.dynatrace.com/process.technology: "Java" 
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-frauddetectionservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-frauddetectionservice
       envOverrides:
         - name: JAVA_TOOL_OPTIONS
           value: '-javaagent:/app/opentelemetry-javaagent.jar' # '-javaagent:/app/opentelemetry-javaagent.jar' # - Duplicate spans from OA and Otel are avoided automatically - https://docs.dynatrace.com/docs/shortlink/opentelemetry-oneagent#java-span-dropping
@@ -217,8 +217,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-frontend
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-frontend
       podAnnotations:
         oneagent.dynatrace.com/inject: "true"
         metadata.dynatrace.com/process.technology: "nodejs"
@@ -272,8 +272,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-imageprovider #TODO: Change this too with extra containers
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-imageprovider #TODO: Change this too with extra containers
       podAnnotations:
         metrics.dynatrace.com/port: "9113"  # https://www.dynatrace.com/news/blog/simplify-observability-for-all-your-custom-metrics-part-4-prometheus/
         metrics.dynatrace.com/scrape: "true" 
@@ -282,7 +282,7 @@ opentelemetry-demo:
       # TODO: suppported in later helm chart
       # containers:
       #   - name: imageprovider
-      #     image: docker.io/shinojosa/astroshop:1.11.1-imageprovider
+      #     image: ghcr.io/open-telemetry/demo:1.11.1-imageprovider
       #     imagePullPolicy: Always
       #     envOverrides:
       #       - name: OTEL_COLLECTOR_NAME
@@ -320,8 +320,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-loadgenerator
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-loadgenerator
       podAnnotations:
         oneagent.dynatrace.com/inject: "false"   
         metadata.dynatrace.com/process.technology: "python"
@@ -334,8 +334,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-paymentservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-paymentservice
       podAnnotations:
         oneagent.dynatrace.com/inject: "true"
         metadata.dynatrace.com/process.technology: "nodejs"
@@ -367,8 +367,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-productcatalogservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-productcatalogservice
       podAnnotations:
           oneagent.dynatrace.com/inject: "false"   
           metadata.dynatrace.com/process.technology: "go"
@@ -390,8 +390,8 @@ opentelemetry-demo:
       useDefault:
         env: true
       imageOverride:
-        repository: docker.io/shinojosa/astroshop
-        tag: 1.11.1-quoteservice
+        repository: ghcr.io/open-telemetry/demo
+        tag: 1.12.0-quoteservice
       podAnnotations:
         oneagent.dynatrace.com/inject: "false"   
         metadata.dynatrace.com/process.technology: "PHP"

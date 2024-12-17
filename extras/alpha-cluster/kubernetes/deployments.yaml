@@ -79,7 +79,7 @@ items:
             value: astroshop-kafka:9092
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.12.0-accountingservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-accountingservice
           imagePullPolicy: Always
           name: accountingservice
           resources:
@@ -182,7 +182,7 @@ items:
             value: none
           - name: OTEL_METRICS_EXPORTER
             value: console,otlp
-          image: shinojosa/astroshop:1.12.0-adservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-adservice
           imagePullPolicy: Always
           name: adservice
           ports:
@@ -207,7 +207,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: cartservice
       app.kubernetes.io/instance: astroshop
@@ -291,7 +291,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.12.0-cartservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-cartservice
           imagePullPolicy: Always
           name: cartservice
           ports:
@@ -328,7 +328,7 @@ items:
     annotations:
       deployment.kubernetes.io/revision: "2"
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: checkoutservice
       app.kubernetes.io/instance: astroshop
@@ -356,7 +356,7 @@ items:
       metadata:
         annotations:
           metadata.dynatrace.com/process.technology: go
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: checkoutservice
           app.kubernetes.io/instance: astroshop
@@ -394,7 +394,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.12.0-checkoutservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-checkoutservice
           imagePullPolicy: Always
           name: checkoutservice
           ports:
@@ -430,7 +430,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: currencyservice
       app.kubernetes.io/instance: astroshop
@@ -480,7 +480,7 @@ items:
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: VERSION
             value: 1.11.1
-          image: ghcr.io/open-telemetry/demo:1.11.1-currencyservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-currencyservice
           imagePullPolicy: Always
           name: currencyservice
           ports:
@@ -504,7 +504,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: emailservice
       app.kubernetes.io/instance: astroshop
@@ -532,7 +532,7 @@ items:
       metadata:
         annotations:
           metadata.dynatrace.com/process.technology: ruby
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: emailservice
           app.kubernetes.io/instance: astroshop
@@ -554,7 +554,7 @@ items:
             value: production
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
-          image: ghcr.io/open-telemetry/demo:1.11.1-emailservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-emailservice
           imagePullPolicy: Always
           name: emailservice
           ports:
@@ -578,7 +578,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: flagd
       app.kubernetes.io/instance: astroshop
@@ -664,7 +664,7 @@ items:
     annotations:
       deployment.kubernetes.io/revision: "2"
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: frauddetectionservice
       app.kubernetes.io/instance: astroshop
@@ -692,7 +692,7 @@ items:
       metadata:
         annotations:
           metadata.dynatrace.com/process.technology: Java
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: frauddetectionservice
           app.kubernetes.io/instance: astroshop
@@ -718,7 +718,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318
-          image: shinojosa/astroshop:1.12.0-frauddetectionservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-frauddetectionservice
           imagePullPolicy: Always
           name: frauddetectionservice
           resources:
@@ -750,7 +750,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: frontend
       app.kubernetes.io/instance: astroshop
@@ -844,7 +844,7 @@ items:
           - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
           - name: NEXT_OTEL_VERBOSE
             value: "0"
-          image: shinojosa/astroshop:1.12.0-frontend
+          image: ghcr.io/open-telemetry/demo:1.12.0-frontend
           imagePullPolicy: Always
           name: frontend
           ports:
@@ -873,7 +873,7 @@ items:
     annotations:
       deployment.kubernetes.io/revision: "1"
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     generation: 1
     labels:
       app.kubernetes.io/component: frontendproxy
@@ -917,8 +917,14 @@ items:
                 fieldPath: metadata.labels['app.kubernetes.io/component']
           - name: OTEL_COLLECTOR_NAME
             value: dynatrace-otel-gateway-collector
+          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+            value: cumulative
           - name: ENVOY_PORT
             value: "8080"
+          - name: FLAGD_UI_HOST
+            value: astroshop-flagd
+          - name: FLAGD_UI_PORT
+            value: "4000"
           - name: FLAGD_HOST
             value: astroshop-flagd
           - name: FLAGD_PORT
@@ -948,9 +954,11 @@ items:
           - name: OTEL_COLLECTOR_PORT_GRPC
             value: "4317"
           - name: OTEL_COLLECTOR_PORT_HTTP
-            value: "4318"
-          image: ghcr.io/open-telemetry/demo:1.11.1-frontendproxy
-          imagePullPolicy: IfNotPresent
+            value: "4318"        
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          image:  ghcr.io/open-telemetry/demo:1.12.0-frontendproxy
+          imagePullPolicy: Always
           name: frontendproxy
           ports:
           - containerPort: 8080
@@ -977,7 +985,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: imageprovider
       app.kubernetes.io/instance: astroshop
@@ -1007,7 +1015,7 @@ items:
           metadata.dynatrace.com/process.technology: nginx
           metrics.dynatrace.com/port: "9113"
           metrics.dynatrace.com/scrape: "true"
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: imageprovider
           app.kubernetes.io/instance: astroshop
@@ -1029,7 +1037,7 @@ items:
             value: "4317"
           - name: OTEL_COLLECTOR_HOST
             value: $(OTEL_COLLECTOR_NAME)
-          image: shinojosa/astroshop:1.12.0-imageprovider
+          image: ghcr.io/open-telemetry/demo:1.12.0-imageprovider
           imagePullPolicy: Always
           name: imageprovider
           ports:
@@ -1064,7 +1072,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: kafka
       app.kubernetes.io/instance: astroshop
@@ -1120,7 +1128,7 @@ items:
             value: http://$(OTEL_COLLECTOR_NAME):4318
           - name: KAFKA_HEAP_OPTS
             value: -Xmx400M -Xms400M
-          image: ghcr.io/open-telemetry/demo:1.11.1-kafka
+          image: ghcr.io/open-telemetry/demo:1.12.0-kafka
           imagePullPolicy: Always
           name: kafka
           ports:
@@ -1152,7 +1160,7 @@ items:
     annotations:
       deployment.kubernetes.io/revision: "1"
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: loadgenerator
       app.kubernetes.io/instance: astroshop
@@ -1215,7 +1223,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: ghcr.io/open-telemetry/demo:1.11.1-loadgenerator
+          image: ghcr.io/open-telemetry/demo:1.12.0-loadgenerator
           imagePullPolicy: IfNotPresent
           name: loadgenerator
           ports:
@@ -1239,7 +1247,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: paymentservice
       app.kubernetes.io/instance: astroshop
@@ -1315,7 +1323,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.12.0-paymentservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-paymentservice
           imagePullPolicy: Always
           name: paymentservice
           ports:
@@ -1343,7 +1351,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: productcatalogservice
       app.kubernetes.io/instance: astroshop
@@ -1371,7 +1379,7 @@ items:
       metadata:
         annotations:
           metadata.dynatrace.com/process.technology: go
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: productcatalogservice
           app.kubernetes.io/instance: astroshop
@@ -1397,7 +1405,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: shinojosa/astroshop:1.12.0-productcatalogservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-productcatalogservice
           imagePullPolicy: Always
           name: productcatalogservice
           ports:
@@ -1409,9 +1417,9 @@ items:
               memory: 150Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
-          volumeMounts:
-          - mountPath: /usr/src/app/products/
-            name: volume
+          #volumeMounts:
+          #- mountPath: /usr/src/app/products/
+          #  name: volume
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -1419,17 +1427,17 @@ items:
         serviceAccount: astroshop
         serviceAccountName: astroshop
         terminationGracePeriodSeconds: 30
-        volumes:
-        - name: volume
-          persistentVolumeClaim:
-            claimName: product-catalog-storage
+        #volumes:
+        #- name: volume
+        #  persistentVolumeClaim:
+        #    claimName: product-catalog-storage
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
     annotations:
       deployment.kubernetes.io/revision: "2"
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: quoteservice
       app.kubernetes.io/instance: astroshop
@@ -1457,7 +1465,7 @@ items:
       metadata:
         annotations:
           metadata.dynatrace.com/process.technology: PHP
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: quoteservice
           app.kubernetes.io/instance: astroshop
@@ -1480,7 +1488,7 @@ items:
           - name: OTEL_PHP_DISABLED_INSTRUMENTATIONS
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318
-          image: shinojosa/astroshop:1.12.0-quoteservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-quoteservice
           imagePullPolicy: Always
           name: quoteservice
           ports:
@@ -1508,7 +1516,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: recommendationservice
       app.kubernetes.io/instance: astroshop
@@ -1536,7 +1544,7 @@ items:
       metadata:
         annotations:
           metadata.dynatrace.com/process.technology: python
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: recommendationservice
           app.kubernetes.io/instance: astroshop
@@ -1566,7 +1574,7 @@ items:
             value: "8013"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: ghcr.io/open-telemetry/demo:1.11.1-recommendationservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-recommendationservice
           imagePullPolicy: Always
           name: recommendationservice
           ports:
@@ -1590,7 +1598,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: shippingservice
       app.kubernetes.io/instance: astroshop
@@ -1618,7 +1626,7 @@ items:
       metadata:
         annotations:
           metadata.dynatrace.com/process.technology: rust
-          oneagent.dynatrace.com/inject: "false"
+          oneagent.dynatrace.com/inject: "true"
         labels:
           app.kubernetes.io/component: shippingservice
           app.kubernetes.io/instance: astroshop
@@ -1640,7 +1648,7 @@ items:
             value: http://astroshop-quoteservice:8080
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
-          image: ghcr.io/open-telemetry/demo:1.11.1-shippingservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-shippingservice
           imagePullPolicy: Always
           name: shippingservice
           ports:
@@ -1664,7 +1672,7 @@ items:
   metadata:
     annotations:
       meta.helm.sh/release-name: astroshop
-      meta.helm.sh/release-namespace: astroshop
+      meta.helm.sh/release-namespace: staging-astroshop
     labels:
       app.kubernetes.io/component: valkey
       app.kubernetes.io/instance: astroshop

@@ -5,6 +5,9 @@
 # git clone ssh://git@bitbucket.lab.dynatrace.org/cloude/opentelemetry-demo-additions.git 
 # cd opentelemetry-demo-additions/opentelemetry-demo-k8s
 
+# docker.io/shinojosa/astroshop
+# ghcr.io/open-telemetry/demo
+
 ## 1 - INSTALL OPERATOR
 helm upgrade --install dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operator \
 --create-namespace \
@@ -22,7 +25,7 @@ kubectl apply -f dynakube-oteldemo.yaml --namespace dynatrace
 helm dependency build ./dt-otel-demo-helm/
 
 
-helm upgrade --install astroshop -f ./dt-otel-demo-helm-deployments/values.yaml --set collector_tenant_endpoint=$DT_ENDPOINT --set collector_tenant_token=$DT_API_TOKEN -n astroshop ./dt-otel-demo-helm
+helm upgrade --install astroshop -f ./dt-otel-demo-helm-deployments/values.yaml --set collector_tenant_endpoint=$DT_ENDPOINT --set collector_tenant_token=$DT_API_TOKEN -n astroshop ./dt-otel-demo-helm --namespace astroshop
 
 
 # Installing Astroshop
