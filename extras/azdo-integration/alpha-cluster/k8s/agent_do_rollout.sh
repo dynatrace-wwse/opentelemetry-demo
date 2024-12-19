@@ -144,10 +144,12 @@ createApp(){
     envsubst < templates/deployments.yaml > gen/deployments-$YAMLFILE
     envsubst < templates/services.yaml > gen/services-$YAMLFILE
     envsubst < templates/flagd-config.yaml > gen/flagd-config-$YAMLFILE
+    envsubst < templates/serviceaccount.yaml > gen/serviceaccount-$YAMLFILE
 
+    kubectl apply -f gen/serviceaccount-$YAMLFILE -n $NAMESPACE
+    kubectl apply -f gen/flagd-config-$YAMLFILE -n $NAMESPACE
     kubectl apply -f gen/deployments-$YAMLFILE -n $NAMESPACE --validate=false
     kubectl apply -f gen/services-$YAMLFILE -n $NAMESPACE
-    kubectl apply -f gen/flagd-config-$YAMLFILE -n $NAMESPACE
 
 }
 

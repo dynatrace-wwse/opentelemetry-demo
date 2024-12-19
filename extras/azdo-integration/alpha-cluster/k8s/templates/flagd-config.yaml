@@ -116,4 +116,4 @@ metadata:
     app.kubernetes.io/version: ${VERSION}
     opentelemetry.io/name: ${APPLICATION}
   name: ${APPLICATION}-flagd-config
-  namespace: staging-${APPLICATION}
+  namespace: ${NAMESPACE}

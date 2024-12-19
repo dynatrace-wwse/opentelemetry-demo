@@ -1243,9 +1243,6 @@ items:
         serviceAccount: ${APPLICATION}
         serviceAccountName: ${APPLICATION}
         terminationGracePeriodSeconds: 30
-            path: /
-            type: ""
-          name: hostfs
 - apiVersion: apps/v1
   kind: Deployment
   metadata:

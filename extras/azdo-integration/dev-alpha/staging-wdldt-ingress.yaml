@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  name: wdldt-stg-astro-ingress
+  namespace: staging-astroshop
+spec:
+  rules:
+  - host: staging.astro.whydevslovedynatrace.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: astroshop-frontendproxy
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - staging.astro.whydevslovedynatrace.com
+    secretName: wdldt-stg-astro-tls

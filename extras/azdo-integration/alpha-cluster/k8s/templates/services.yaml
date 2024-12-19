@@ -305,41 +305,41 @@ items:
       opentelemetry.io/name: ${APPLICATION}-loadgenerator
     sessionAffinity: None
     type: ClusterIP
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-    labels:
-      app.kubernetes.io/instance: ${APPLICATION}
-      app.kubernetes.io/name: otel-gateway-collector
-      component: standalone-collector
-    name: ${APPLICATION}-otel-gateway-collector
-    namespace: ${NAMESPACE}
-  spec:
-    internalTrafficPolicy: Cluster
-    ipFamilies:
-    - IPv4
-    ipFamilyPolicy: SingleStack
-    ports:
-    - name: health
-      port: 13133
-      protocol: TCP
-      targetPort: 13133
-    - appProtocol: grpc
-      name: otlp
-      port: 4317
-      protocol: TCP
-      targetPort: 4317
-    - name: otlp-http
-      port: 4318
-      protocol: TCP
-      targetPort: 4318
-    selector:
-      app.kubernetes.io/instance: ${APPLICATION}
-      app.kubernetes.io/name: otel-gateway-collector
-      component: standalone-collector
-    sessionAffinity: None
-    type: ClusterIP
+# - apiVersion: v1
+#   kind: Service
+#   metadata:
+#     annotations:
+#     labels:
+#       app.kubernetes.io/instance: ${APPLICATION}
+#       app.kubernetes.io/name: otel-gateway-collector
+#       component: standalone-collector
+#     name: ${APPLICATION}-otel-gateway-collector
+#     namespace: ${NAMESPACE}
+#   spec:
+#     internalTrafficPolicy: Cluster
+#     ipFamilies:
+#     - IPv4
+#     ipFamilyPolicy: SingleStack
+#     ports:
+#     - name: health
+#       port: 13133
+#       protocol: TCP
+#       targetPort: 13133
+#     - appProtocol: grpc
+#       name: otlp
+#       port: 4317
+#       protocol: TCP
+#       targetPort: 4317
+#     - name: otlp-http
+#       port: 4318
+#       protocol: TCP
+#       targetPort: 4318
+#     selector:
+#       app.kubernetes.io/instance: ${APPLICATION}
+#       app.kubernetes.io/name: otel-gateway-collector
+#       component: standalone-collector
+#     sessionAffinity: None
+#     type: ClusterIP
 - apiVersion: v1
   kind: Service
   metadata:
