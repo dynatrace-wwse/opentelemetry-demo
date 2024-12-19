@@ -352,8 +352,8 @@ services:
     depends_on:
       frontend:
         condition: service_started
-      loadgenerator:
-        condition: service_started
+    #  loadgenerator:
+    #    condition: service_started
       jaeger:
         condition: service_started
       grafana:
@@ -389,42 +389,42 @@ services:
     logging: *logging
 
   # Load Generator
-  loadgenerator:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-loadgenerator
-    container_name: load-generator
-    build:
-      context: ./
-      dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-    deploy:
-      resources:
-        limits:
-          memory: 1500M
-    restart: unless-stopped
-    ports:
-      - "${LOCUST_WEB_PORT}"
-    environment:
-      - LOCUST_WEB_PORT
-      - LOCUST_USERS
-      - LOCUST_HOST
-      - LOCUST_HEADLESS
-      - LOCUST_AUTOSTART
-      - LOCUST_BROWSER_TRAFFIC_ENABLED=true
-      - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=loadgenerator
-      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-      - LOCUST_WEB_HOST=0.0.0.0
-      - FLAGD_HOST
-      - FLAGD_PORT
-    depends_on:
-      frontend:
-        condition: service_started
-      flagd:
-        condition: service_started
-    logging: *logging
+  # loadgenerator:
+  #   image: ${IMAGE_NAME}:${DEMO_VERSION}-loadgenerator
+  #   container_name: load-generator
+  #   build:
+  #     context: ./
+  #     dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
+  #     cache_from:
+  #       - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 1500M
+  #   restart: unless-stopped
+  #   ports:
+  #     - "${LOCUST_WEB_PORT}"
+  #   environment:
+  #     - LOCUST_WEB_PORT
+  #     - LOCUST_USERS
+  #     - LOCUST_HOST
+  #     - LOCUST_HEADLESS
+  #     - LOCUST_AUTOSTART
+  #     - LOCUST_BROWSER_TRAFFIC_ENABLED=true
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT
+  #     - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+  #     - OTEL_RESOURCE_ATTRIBUTES
+  #     - OTEL_SERVICE_NAME=loadgenerator
+  #     - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+  #     - LOCUST_WEB_HOST=0.0.0.0
+  #     - FLAGD_HOST
+  #     - FLAGD_PORT
+  #   depends_on:
+  #     frontend:
+  #       condition: service_started
+  #     flagd:
+  #       condition: service_started
+  #   logging: *logging
 
   # Payment service
   paymentservice:
@@ -442,6 +442,7 @@ services:
     restart: unless-stopped
     ports:
       - "${PAYMENT_SERVICE_PORT}"
+      - "7887"
     environment:
       - PAYMENT_SERVICE_PORT
       - FLAGD_HOST

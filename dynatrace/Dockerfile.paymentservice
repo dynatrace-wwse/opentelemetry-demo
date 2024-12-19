@@ -23,5 +23,5 @@ COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./
 COPY ./pb/demo.proto ./
 
-EXPOSE ${PAYMENT_SERVICE_PORT}
-ENTRYPOINT ["node","index.js"]
+EXPOSE ${PAYMENT_SERVICE_PORT} 7887
+ENTRYPOINT ["node","--inspect=0.0.0.0:7887","index.js"]

@@ -9,7 +9,7 @@ declare -a IMAGES=("accountingservice" "adservice" "cartservice" "checkoutservic
 OLDSERVER="shinojosa/astroshop"
 NEWSERVER="shinojosa/astroshop"
 OLDTAG="1.12.0"
-NEWTAG="1.12.0"
+NEWTAG="1.12.1"
 
 retagImages() {
    ## now loop through the above array
