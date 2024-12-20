@@ -206,11 +206,11 @@ public final class AdService {
           throw new StatusRuntimeException(Status.UNAVAILABLE);
         }
 
-        if (ffClient.getBooleanValue(ADSERVICE_MANUAL_GC_FEATURE_FLAG, false, evaluationContext)) {
-          logger.warn("Feature Flag " + ADSERVICE_MANUAL_GC_FEATURE_FLAG + " enabled, performing a manual gc now");
-          GarbageCollectionTrigger gct = new GarbageCollectionTrigger();
-          gct.doExecute();
-        }
+        // if (ffClient.getBooleanValue(ADSERVICE_MANUAL_GC_FEATURE_FLAG, false, evaluationContext)) {
+        logger.warn("Feature Flag " + ADSERVICE_MANUAL_GC_FEATURE_FLAG + " is in code! enabled, performing a manual gc now");
+        GarbageCollectionTrigger gct = new GarbageCollectionTrigger();
+        gct.doExecute();
+        // }
 
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);

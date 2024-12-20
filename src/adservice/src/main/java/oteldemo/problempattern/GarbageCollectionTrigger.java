@@ -31,9 +31,9 @@ public class GarbageCollectionTrigger {
     */
     public GarbageCollectionTrigger() {
         memUtils = new MemoryUtils(ManagementFactory.getMemoryMXBean());
-        gc_delay = TimeUnit.SECONDS.toMillis(10);
-        finalize_delay = 500;
-        maxObjects = 500000;
+        gc_delay = TimeUnit.SECONDS.toMillis(30);
+        finalize_delay = 100;
+        maxObjects = 100000;
     }
 
     /**
