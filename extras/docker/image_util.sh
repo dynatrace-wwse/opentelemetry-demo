@@ -4,12 +4,13 @@
 # docker tag ghcr.io/open-telemetry/demo:0.32.8-frauddetectionservice shinojosa/astroshop/frauddetectionservice:0.32.8
 
 ## declare an array variable
-declare -a IMAGES=("accountingservice" "adservice" "cartservice" "checkoutservice" "currencyservice" "emailservice" "frauddetectionservice" "frontend" "frontendproxy" "imageprovider" "kafka" "loadgenerator" "paymentservice" "productcatalogservice" "quoteservice" "recommendationservice" "shippingservice")
+#declare -a IMAGES=("accountingservice" "adservice" "cartservice" "checkoutservice" "currencyservice" "emailservice" "frauddetectionservice" "frontend" "frontendproxy" "imageprovider" "kafka" "loadgenerator" "paymentservice" "productcatalogservice" "quoteservice" "recommendationservice" "shippingservice")
+declare -a IMAGES=("adservice")
 
 OLDSERVER="shinojosa/astroshop"
 NEWSERVER="shinojosa/astroshop"
-OLDTAG="1.12.0"
-NEWTAG="1.12.0"
+OLDTAG="1.12.0-CPU"
+NEWTAG="1.12.0-GC"
 
 retagImages() {
    ## now loop through the above array
