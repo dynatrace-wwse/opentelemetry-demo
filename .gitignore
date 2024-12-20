@@ -68,3 +68,6 @@ test/tracetesting/tracetesting-vars.yaml
 
 # mine
 **/**-mine.*
+
+# Helm chart dependencies
+**/charts/*.tgz

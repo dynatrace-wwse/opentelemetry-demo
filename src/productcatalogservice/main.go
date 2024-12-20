@@ -53,12 +53,27 @@ var (
 )
 
 func init() {
+	ctx := context.Background()
+	span := trace.SpanFromContext(ctx)
+
 	log = logrus.New()
 	var err error
 	catalog, err = readProductFile()
 	if err != nil {
-		log.Fatalf("Reading Product Files: %v", err)
+		log.WithFields(LogrusFields(span)).Fatalf("Reading Product Files: %v", err)
 		os.Exit(1)
+	}
+}
+
+func LogrusFields(span trace.Span) logrus.Fields {
+	if span != nil {
+		return logrus.Fields{
+			"span_id":  span.SpanContext().SpanID().String(),
+			"trace_id": span.SpanContext().TraceID().String(),
+		}
+	} else {
+		log.Debugf("No span found")
+		return logrus.Fields{}
 	}
 }
 
@@ -81,10 +96,11 @@ func initResource() *sdkresource.Resource {
 
 func initTracerProvider() *sdktrace.TracerProvider {
 	ctx := context.Background()
+	span := trace.SpanFromContext(ctx)
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("OTLP Trace gRPC Creation: %v", err)
+		log.WithFields(LogrusFields(span)).Fatalf("OTLP Trace gRPC Creation: %v", err)
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -97,10 +113,11 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 func initMeterProvider() *sdkmetric.MeterProvider {
 	ctx := context.Background()
+	span := trace.SpanFromContext(ctx)
 
 	exporter, err := otlpmetricgrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+		log.WithFields(LogrusFields(span)).Fatalf("new otlp metric grpc exporter failed: %v", err)
 	}
 
 	mp := sdkmetric.NewMeterProvider(
@@ -135,41 +152,44 @@ func watchFile(filePath string) error {
 }
 
 func main() {
+	ctx := context.Background()
+	span := trace.SpanFromContext(ctx)
+
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Tracer Provider Shutdown: %v", err)
+			log.WithFields(LogrusFields(span)).Fatalf("Tracer Provider Shutdown: %v", err)
 		}
-		log.Println("Shutdown tracer provider")
+		log.WithFields(LogrusFields(span)).Println("Shutdown tracer provider")
 	}()
 
 	mp := initMeterProvider()
 	defer func() {
 		if err := mp.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Error shutting down meter provider: %v", err)
+			log.WithFields(LogrusFields(span)).Fatalf("Error shutting down meter provider: %v", err)
 		}
-		log.Println("Shutdown meter provider")
+		log.WithFields(LogrusFields(span)).Println("Shutdown meter provider")
 	}()
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 	err := openfeature.SetProvider(flagd.NewProvider())
 	if err != nil {
-		log.Fatal(err)
+		log.WithFields(LogrusFields(span)).Fatal(err)
 	}
 
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
-		log.Fatal(err)
+		log.WithFields(LogrusFields(span)).Fatal(err)
 	}
 
 	svc := &productCatalog{}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_SERVICE_PORT")
 
-	log.Infof("ProductCatalogService gRPC server started on port: %s", port)
+	log.WithFields(LogrusFields(span)).Infof("ProductCatalogService gRPC server started on port: %s", port)
 
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
-		log.Fatalf("TCP Listen: %v", err)
+		log.WithFields(LogrusFields(span)).Fatalf("TCP Listen: %v", err)
 	}
 
 	srv := grpc.NewServer(
@@ -184,16 +204,16 @@ func main() {
 	// Watch for updates to product catalog files
 	go func() {
 		for {
-			log.Println("Watching product files for changes")
+			log.WithFields(LogrusFields(span)).Println("Watching product files for changes")
 			err := watchFile("./products/products.json")
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			log.Println("Reloading modified products.json")
+			log.WithFields(LogrusFields(span)).Println("Reloading modified products.json")
 			catalog, err = readProductFile()
 			if err != nil {
-				log.Fatalf("Reading Product Files: %v", err)
+				log.WithFields(LogrusFields(span)).Fatalf("Reading Product Files: %v", err)
 				os.Exit(1)
 			}
 		}
@@ -204,14 +224,14 @@ func main() {
 
 	go func() {
 		if err := srv.Serve(ln); err != nil {
-			log.Fatalf("Failed to serve gRPC server, err: %v", err)
+			log.WithFields(LogrusFields(span)).Fatalf("Failed to serve gRPC server, err: %v", err)
 		}
 	}()
 
 	<-ctx.Done()
 
 	srv.GracefulStop()
-	log.Println("ProductCatalogService gRPC server stopped")
+	log.WithFields(LogrusFields(span)).Println("ProductCatalogService gRPC server stopped")
 }
 
 type productCatalog struct {
@@ -219,6 +239,8 @@ type productCatalog struct {
 }
 
 func readProductFile() ([]*pb.Product, error) {
+	ctx := context.Background()
+	span := trace.SpanFromContext(ctx)
 
 	// read the contents of each .json file and unmarshal into a ListProductsResponse
 	// then append the products to the catalog
@@ -234,15 +256,18 @@ func readProductFile() ([]*pb.Product, error) {
 	}
 
 	products = append(products, res.Products...)
-	log.Infof("Loaded %d products", len(products))
+	log.WithFields(LogrusFields(span)).Infof("Loaded %d products", len(products))
 
 	return products, nil
 }
 
 func mustMapEnv(target *string, key string) {
+	ctx := context.Background()
+	span := trace.SpanFromContext(ctx)
+
 	value, present := os.LookupEnv(key)
 	if !present {
-		log.Fatalf("Environment Variable Not Set: %q", key)
+		log.WithFields(LogrusFields(span)).Fatalf("Environment Variable Not Set: %q", key)
 	}
 	*target = value
 }
@@ -269,6 +294,8 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	span.SetAttributes(
 		attribute.String("app.product.id", req.Id),
 	)
+
+	log.WithFields(LogrusFields(span)).Infof("[GetProduct] product.id=%qq", req.Id)
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
@@ -298,6 +325,9 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	span.SetAttributes(
 		attribute.String("app.product.name", found.Name),
 	)
+
+	log.WithFields(LogrusFields(span)).Infof("[GetProduct] product.name=%qq", found.Name)
+
 	return found, nil
 }
 

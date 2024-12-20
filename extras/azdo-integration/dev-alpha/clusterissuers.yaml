@@ -1,0 +1,67 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  annotations:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: sergio.hinojosa@dynatrace.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  annotations:
+  name: letsencrypt-staging
+spec:
+  acme:
+    email: sergio.hinojosa@dynatrace.com
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  annotations:
+  name: letsencrypt-prod
+  namespace: default
+spec:
+  acme:
+    email: sergio.hinojosa@dynatrace.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  annotations:
+  name: letsencrypt-staging
+  namespace: default
+spec:
+  acme:
+    email: sergio.hinojosa@dynatrace.com
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx

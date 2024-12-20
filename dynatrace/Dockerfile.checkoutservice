@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Dynatrace Support limited to official, stable Go releases - https://docs.dynatrace.com/docs/ingest-from/technology-support/application-software/go/support/go-known-limitations#go-official-stable-releases
-FROM golang:1.22.0-alpine AS builder
+FROM golang:1.22.10-alpine AS builder
 
 WORKDIR /usr/src/app/
 
