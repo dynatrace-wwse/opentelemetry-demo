@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class CPULoad {
     private static final Logger logger = LogManager.getLogger(CPULoad.class.getName());
     private static final int THREAD_COUNT = 4;
+    public static final long NANOSECONDS = 1000000L;
     private boolean running = false;
     private final List<Logarithmizer> runningWorkers = new ArrayList<>();
     
@@ -53,6 +54,20 @@ public class CPULoad {
         } else {
             running = false;
             stopWorkers();
+        }
+    }
+
+    /**
+     *  Method that calls itself recusrively. Also known as the Fibonnaci sequence.
+     * @param n
+     * @return
+     */
+    public static void computeCache(int milliseconds) {
+        long sleepTime = milliseconds * NANOSECONDS; // convert to nanoseconds
+        long startTime = System.nanoTime();
+    while ((System.nanoTime() - startTime) < sleepTime) {
+        // do nothing, continue due chechstyle
+        continue;
         }
     }
 
