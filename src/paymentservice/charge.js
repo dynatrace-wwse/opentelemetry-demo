@@ -48,7 +48,7 @@ module.exports.charge = async request => {
   }
 
   if ((currentYear * 12 + currentMonth) > (year * 12 + month)) {
-    throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`);
+    throw new Error(`The credit card (ending ${lastFourDigits}) expired.`);
   }
 
   // check baggage for synthetic_request=true, and add charged attribute accordingly
