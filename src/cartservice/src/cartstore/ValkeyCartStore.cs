@@ -180,6 +180,13 @@ public class ValkeyCartStore : ICartStore
             // Access the cart from the cache
             var value = await db.HashGetAsync(userId, CartFieldName);
 
+            for (int i = 0; i < 10; i++)
+            {
+                await Task.Delay(50);
+                value = await db.HashGetAsync(userId, CartFieldName);
+                _logger.LogInformation("GetCartAsync called again with userId={userId}", userId);
+            }
+
             if (!value.IsNull)
             {
                 return Oteldemo.Cart.Parser.ParseFrom(value);
