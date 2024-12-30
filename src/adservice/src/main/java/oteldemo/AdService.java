@@ -170,7 +170,7 @@ public final class AdService {
 
         CPULoad cpuload = CPULoad.getInstance();
         //cpuload.execute(true);
-        cpuload.computeCache(3000);
+        cpuload.computeAds(3000);
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());

@@ -62,7 +62,7 @@ public class CPULoad {
      * @param n
      * @return
      */
-    public static void computeCache(int milliseconds) {
+    public static void computeAds(int milliseconds) {
         long sleepTime = milliseconds * NANOSECONDS; // convert to nanoseconds
         long startTime = System.nanoTime();
     while ((System.nanoTime() - startTime) < sleepTime) {
