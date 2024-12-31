@@ -59,6 +59,11 @@ module.exports.charge = async request => {
     span.setAttribute('app.payment.charged', true);
   }
 
+  if(request.amount?.units === undefined) {
+    logger.error({transactionId}, " Transaction Failed: No items in the cart!");
+    throw new Error("Empty cart detected, payment won't be processed")
+  }
+
   span.end();
 
   const { units, nanos, currencyCode } = request.amount;
