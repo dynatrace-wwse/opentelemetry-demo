@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Grpc.Core;
 using StackExchange.Redis;
@@ -175,14 +176,19 @@ public class ValkeyCartStore : ICartStore
         {
             EnsureRedisConnected();
 
+            using HttpClient client = new HttpClient();
+
+            string url = "https://jsonplaceholder.typicode.com/posts";
+
             var db = _redis.GetDatabase();
 
             // Access the cart from the cache
             var value = await db.HashGetAsync(userId, CartFieldName);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 1; i < 11; i++)
             {
                 await Task.Delay(50);
+                HttpResponseMessage response = await client.GetAsync(url + "/" + i.ToString());
                 value = await db.HashGetAsync(userId, CartFieldName);
                 _logger.LogInformation("GetCartAsync called again with userId={userId}", userId);
             }
