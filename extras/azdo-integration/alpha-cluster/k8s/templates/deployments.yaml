@@ -1152,97 +1152,97 @@ items:
         serviceAccount: ${APPLICATION}
         serviceAccountName: ${APPLICATION}
         terminationGracePeriodSeconds: 30
-- apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    annotations:
-      deployment.kubernetes.io/revision: "1"
-    labels:
-      app.kubernetes.io/component: loadgenerator
-      app.kubernetes.io/instance: ${APPLICATION}
-      app.kubernetes.io/name: ${APPLICATION}-loadgenerator
-      app.kubernetes.io/part-of: ${NAMESPACE}
-      app.kubernetes.io/version: ${VERSION}
-      opentelemetry.io/name: ${APPLICATION}-loadgenerator
-    name: ${APPLICATION}-loadgenerator
-    namespace: ${NAMESPACE}
-  spec:
-    progressDeadlineSeconds: 600
-    replicas: 1
-    revisionHistoryLimit: 10
-    selector:
-      matchLabels:
-        opentelemetry.io/name: ${APPLICATION}-loadgenerator
-    strategy:
-      rollingUpdate:
-        maxSurge: 25%
-        maxUnavailable: 25%
-      type: RollingUpdate
-    template:
-      metadata:
-        annotations:
-          metadata.dynatrace.com/process.technology: python
-          oneagent.dynatrace.com/inject: "false"
-        labels:
-          app.kubernetes.io/component: loadgenerator
-          app.kubernetes.io/instance: ${APPLICATION}
-          app.kubernetes.io/name: ${APPLICATION}-loadgenerator
-          opentelemetry.io/name: ${APPLICATION}-loadgenerator
-      spec:
-        containers:
-        - env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_COLLECTOR_NAME
-            value: ${APPLICATION}-otel-gateway-collector
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: LOCUST_WEB_PORT
-            value: "8089"
-          - name: LOCUST_USERS
-            value: "10"
-          - name: LOCUST_SPAWN_RATE
-            value: "1"
-          - name: LOCUST_HOST
-            value: https://${APPLICATION}.whydevslovedynatrace.com
-          - name: LOCUST_HEADLESS
-            value: "false"
-          - name: LOCUST_AUTOSTART
-            value: "true"
-          - name: LOCUST_BROWSER_TRAFFIC_ENABLED
-            value: "true"
-          - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
-            value: python
-          - name: FLAGD_HOST
-            value: ${APPLICATION}-flagd
-          - name: FLAGD_PORT
-            value: "8013"
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=${NAMESPACE},service.version=${VERSION}
-          image: ${REPOSITORY}:${VERSION}-loadgenerator
-          imagePullPolicy: ${imagePullPolicy}
-          name: loadgenerator
-          ports:
-          - containerPort: 8089
-            name: service
-            protocol: TCP
-          resources:
-            limits:
-              memory: 2Gi
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        schedulerName: default-scheduler
-        securityContext: {}
-        serviceAccount: ${APPLICATION}
-        serviceAccountName: ${APPLICATION}
-        terminationGracePeriodSeconds: 30
+# - apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     annotations:
+#       deployment.kubernetes.io/revision: "1"
+#     labels:
+#       app.kubernetes.io/component: loadgenerator
+#       app.kubernetes.io/instance: ${APPLICATION}
+#       app.kubernetes.io/name: ${APPLICATION}-loadgenerator
+#       app.kubernetes.io/part-of: ${NAMESPACE}
+#       app.kubernetes.io/version: ${VERSION}
+#       opentelemetry.io/name: ${APPLICATION}-loadgenerator
+#     name: ${APPLICATION}-loadgenerator
+#     namespace: ${NAMESPACE}
+#   spec:
+#     progressDeadlineSeconds: 600
+#     replicas: 1
+#     revisionHistoryLimit: 10
+#     selector:
+#       matchLabels:
+#         opentelemetry.io/name: ${APPLICATION}-loadgenerator
+#     strategy:
+#       rollingUpdate:
+#         maxSurge: 25%
+#         maxUnavailable: 25%
+#       type: RollingUpdate
+#     template:
+#       metadata:
+#         annotations:
+#           metadata.dynatrace.com/process.technology: python
+#           oneagent.dynatrace.com/inject: "false"
+#         labels:
+#           app.kubernetes.io/component: loadgenerator
+#           app.kubernetes.io/instance: ${APPLICATION}
+#           app.kubernetes.io/name: ${APPLICATION}-loadgenerator
+#           opentelemetry.io/name: ${APPLICATION}-loadgenerator
+#       spec:
+#         containers:
+#         - env:
+#           - name: OTEL_SERVICE_NAME
+#             valueFrom:
+#               fieldRef:
+#                 apiVersion: v1
+#                 fieldPath: metadata.labels['app.kubernetes.io/component']
+#           - name: OTEL_COLLECTOR_NAME
+#             value: ${APPLICATION}-otel-gateway-collector
+#           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+#             value: cumulative
+#           - name: LOCUST_WEB_PORT
+#             value: "8089"
+#           - name: LOCUST_USERS
+#             value: "10"
+#           - name: LOCUST_SPAWN_RATE
+#             value: "1"
+#           - name: LOCUST_HOST
+#             value: https://${APPLICATION}.whydevslovedynatrace.com
+#           - name: LOCUST_HEADLESS
+#             value: "false"
+#           - name: LOCUST_AUTOSTART
+#             value: "true"
+#           - name: LOCUST_BROWSER_TRAFFIC_ENABLED
+#             value: "true"
+#           - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+#             value: python
+#           - name: FLAGD_HOST
+#             value: ${APPLICATION}-flagd
+#           - name: FLAGD_PORT
+#             value: "8013"
+#           - name: OTEL_EXPORTER_OTLP_ENDPOINT
+#             value: http://$(OTEL_COLLECTOR_NAME):4317
+#           - name: OTEL_RESOURCE_ATTRIBUTES
+#             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=${NAMESPACE},service.version=${VERSION}
+#           image: ${REPOSITORY}:${VERSION}-loadgenerator
+#           imagePullPolicy: ${imagePullPolicy}
+#           name: loadgenerator
+#           ports:
+#           - containerPort: 8089
+#             name: service
+#             protocol: TCP
+#           resources:
+#             limits:
+#               memory: 2Gi
+#           terminationMessagePath: /dev/termination-log
+#           terminationMessagePolicy: File
+#         dnsPolicy: ClusterFirst
+#         restartPolicy: Always
+#         schedulerName: default-scheduler
+#         securityContext: {}
+#         serviceAccount: ${APPLICATION}
+#         serviceAccountName: ${APPLICATION}
+#         terminationGracePeriodSeconds: 30
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
