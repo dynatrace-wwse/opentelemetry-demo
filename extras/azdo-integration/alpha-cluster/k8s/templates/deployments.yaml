@@ -32,6 +32,7 @@ items:
           metadata.dynatrace.com/process.technology: .NET
           oneagent.dynatrace.com/inject: "true"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: accountingservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-accountingservice
@@ -125,6 +126,7 @@ items:
           metadata.dynatrace.com/process.technology: Java
           oneagent.dynatrace.com/inject: "true"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: adservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-adservice
@@ -213,6 +215,7 @@ items:
           metadata.dynatrace.com/process.technology: .NET
           oneagent.dynatrace.com/inject: "true"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: cartservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-cartservice
@@ -318,6 +321,7 @@ items:
           metadata.dynatrace.com/process.technology: go
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: checkoutservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-checkoutservice
@@ -421,6 +425,7 @@ items:
           metadata.dynatrace.com/process.technology: cpp
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: currencyservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-currencyservice
@@ -496,6 +501,7 @@ items:
           metadata.dynatrace.com/process.technology: ruby
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: emailservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-emailservice
@@ -571,6 +577,7 @@ items:
           metadata.dynatrace.com/process.technology: flagd
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: flagd
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-flagd
@@ -706,6 +713,7 @@ items:
           metadata.dynatrace.com/process.technology: Java
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: frauddetectionservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-frauddetectionservice
@@ -793,6 +801,7 @@ items:
           metadata.dynatrace.com/process.technology: nodejs
           oneagent.dynatrace.com/inject: "true"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: frontend
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-frontend
@@ -910,6 +919,7 @@ items:
         annotations:
           dt.owner: dev-team-ux
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: frontendproxy
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-frontendproxy
@@ -1021,6 +1031,7 @@ items:
           metrics.dynatrace.com/scrape: "true"
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: imageprovider
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-imageprovider
@@ -1096,6 +1107,7 @@ items:
           metadata.dynatrace.com/process.technology: kafka
           oneagent.dynatrace.com/inject: "true"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: kafka
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-kafka
@@ -1184,6 +1196,7 @@ items:
 #           metadata.dynatrace.com/process.technology: python
 #           oneagent.dynatrace.com/inject: "false"
 #         labels:
+#           app.kubernetes.io/version: ${VERSION}
 #           app.kubernetes.io/component: loadgenerator
 #           app.kubernetes.io/instance: ${APPLICATION}
 #           app.kubernetes.io/name: ${APPLICATION}-loadgenerator
@@ -1275,6 +1288,7 @@ items:
           metadata.dynatrace.com/process.technology: nodejs
           oneagent.dynatrace.com/inject: "true"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: paymentservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-paymentservice
@@ -1368,6 +1382,7 @@ items:
           metadata.dynatrace.com/process.technology: go
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: productcatalogservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-productcatalogservice
@@ -1447,6 +1462,7 @@ items:
           metadata.dynatrace.com/process.technology: PHP
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: quoteservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-quoteservice
@@ -1527,6 +1543,7 @@ items:
           metadata.dynatrace.com/process.technology: python
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: recommendationservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-recommendationservice
@@ -1610,6 +1627,7 @@ items:
           metadata.dynatrace.com/process.technology: rust
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: shippingservice
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-shippingservice
@@ -1687,6 +1705,7 @@ items:
           metrics.dynatrace.com/scrape: "true"
           oneagent.dynatrace.com/inject: "false"
         labels:
+          app.kubernetes.io/version: ${VERSION}
           app.kubernetes.io/component: valkey
           app.kubernetes.io/instance: ${APPLICATION}
           app.kubernetes.io/name: ${APPLICATION}-valkey
