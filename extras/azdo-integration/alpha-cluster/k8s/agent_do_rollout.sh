@@ -173,17 +173,17 @@ applyDeploymentChange() {
     echo "Deploying version $VERSION for $NAMESPACE."
     kubectl apply -f gen/deploy-$YAMLFILE --validate=false
 
-    echo "Waiting for all pods of all deployments to be ready and running..."
-    kubectl wait --for=condition=Ready pods --all -n staging-astroshop --timeout=300s
+    echo "Waiting for all deployments to be available ..."
+    kubectl wait --for=condition=available deploy --all -n $NAMESPACE --timeout=60s
+
+    echo "Waiting for all pods of version $VERSION from namespace $NAMESPACE to be available ..."
+    kubectl wait --for=condition=Ready pods --selector=app.kubernetes.io/version="$VERSION" -n $NAMESPACE --timeout=60s
 
     echo "All new deployments are up and running :)"
     
     # If we want to do an inliner
     #kubectl apply -f <( envsubst < deployment.yaml )
     
-    # TODO Fix this and add label to pods, swap for sleep
-    #kubectl wait --for=condition=Ready --timeout=300s --all pods --namespace $NAMESPACE || true
-    #sleep 150 || true
 }
 
 getNodes() {
